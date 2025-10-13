@@ -7,6 +7,13 @@ export type IndexDocument = Omit<Document, "id"> &  {
     _id: string;
 };
 
+export type QueryResponse<T extends Document> = {
+    results: T[];
+    found: number;
+    offset: number;
+    limit: number;
+};
+
 // export type Field = string | string[];
 
 // export type RangeValue = {
@@ -46,9 +53,3 @@ export type IndexDocument = Omit<Document, "id"> &  {
 
 // export type Query = Token;
 
-// export type QueryResponse<T extends Document> = {
-//     results: T[];
-//     totalHits?: number;
-//     offset?: number;
-//     limit?: number;
-// };

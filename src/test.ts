@@ -37,7 +37,7 @@ async function example() {
 
   try {
     // Index documents (properly typed)
-    await search.put(posts);
+    await search.putAll(posts);
 
     console.log("Documents indexed successfully");
 
