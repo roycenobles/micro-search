@@ -9,29 +9,25 @@ export class MicroSearch<T extends Document> {
   }
 
   public async put(docs: T[]): Promise<void> {
-    await this.index.PUT(docs.map(doc => ({ _id: doc.id, ...doc })));
+    await this.index.PUT(docs.map(({ id, ...rest }) => ({ _id: id, ...rest })));
   }
 
   public async putOne(doc: T): Promise<void> {
     await this.put([doc]);
   }
+
+  public async query(query: any): Promise<any> {
+    const response = await this.index.SEARCH(query, { DOCUMENTS: true });
+
+    return response;
+  }
+
+  private async all(limit: number = 100): Promise<any> {
+    const response = await this.index.ALL_DOCUMENTS(limit);
+
+    return response;
+  }
 }
-
-//   public async index(docs: T[]): Promise<void> {
-//     const index = await this._index;
-
-//     const toStore = docs.map((doc) => {
-//         const { id, ...rest } = doc;
-
-//         return { _id: id, ...rest };
-//     });
-
-//     await index.PUT(toStore);
-//   }
-
-//   public async indexOne(doc: T): Promise<void> {
-//     await this.index([doc]);
-//   }
 
 //   public async query(query: Query): Promise<QueryResponse<T>> {
 //     const index = await this._index;

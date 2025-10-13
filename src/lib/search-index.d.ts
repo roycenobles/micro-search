@@ -11,6 +11,7 @@ declare module "search-index" {
   export class SearchIndex {
     constructor(options: IndexOptions);
     PUT(documents: IndexDocument[]): Promise<void>;
+    ALL_DOCUMENTS(limit: number): Promise<any>;
     SEARCH(query: any[], options?: { DOCUMENTS?: boolean }): Promise<any>;
   }
 }
