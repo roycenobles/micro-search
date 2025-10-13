@@ -4,4 +4,6 @@ export type Document = {
 
 export type Query = {};
 
-export type QueryResponse<T extends Document> = {};
+export type QueryResponse<T extends Document> = {
+    results: T[];
+};
