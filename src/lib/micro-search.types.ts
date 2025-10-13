@@ -1,4 +1,6 @@
-export type Document<T extends Object> = {};
+export type Document<T extends Object> = {
+    id: string;
+};
 
 export type Query = {};
 
