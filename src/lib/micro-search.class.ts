@@ -17,16 +17,16 @@ export class MicroSearch<T extends Document> {
   }
 
   public async query(query: any): Promise<QueryResponse<T>> {
-    return this.mapResponse(
+    return this.mapQueryResponse(
       await this.index.SEARCH(query, { DOCUMENTS: true })
     );
   }
 
   private async queryAll(limit: number = 100): Promise<QueryResponse<T>> {
-    return this.mapResponse(await this.index.ALL_DOCUMENTS(limit));
+    return this.mapQueryResponse(await this.index.ALL_DOCUMENTS(limit));
   }
 
-  private mapResponse(response: any): QueryResponse<T> {
+  private mapQueryResponse(response: any): QueryResponse<T> {
     return {
       results: response.RESULT.map((item: any) => {
         const { _id, publishedAt, ...properties } = item._doc;
