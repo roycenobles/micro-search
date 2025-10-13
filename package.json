@@ -1,0 +1,20 @@
+{
+  "name": "micro-search",
+  "version": "1.0.0",
+  "description": "A tiny search framework suitable for small to medium microservices",
+  "homepage": "https://github.com/roycenobles/micro-search#readme",
+  "bugs": {
+    "url": "https://github.com/roycenobles/micro-search/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roycenobles/micro-search.git"
+  },
+  "license": "MIT",
+  "author": "Royce Nobles",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
