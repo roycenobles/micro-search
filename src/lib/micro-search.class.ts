@@ -11,6 +11,10 @@ export class MicroSearch<T extends Document> {
   public async put(docs: T[]): Promise<void> {
     await this.index.PUT(docs.map(doc => ({ _id: doc.id, ...doc })));
   }
+
+  public async putOne(doc: T): Promise<void> {
+    await this.put([doc]);
+  }
 }
 
 //   public async index(docs: T[]): Promise<void> {

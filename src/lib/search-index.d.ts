@@ -1,12 +1,19 @@
-declare module 'search-index' {
+declare module "search-index" {
+  export type IndexOptions = {
+    db?: any;
+    cacheLength?: number;
+    caseSensitive?: boolean;
+    name?: string;
+    tokenAppend?: string;
+    stopwords?: string[];
+  };
+
   export class SearchIndex {
-    constructor(options: { name: string });
-    PUT(documents: any[]): Promise<void>;
+    constructor(options: IndexOptions);
+    PUT(documents: IndexDocument[]): Promise<void>;
     SEARCH(query: any[], options?: { DOCUMENTS?: boolean }): Promise<any>;
   }
 }
-
-// 
 
 // export type SearchIndexInstance = {
 //     PUT: (documents: readonly any[], options?: any) => Promise<any[]>;
@@ -21,13 +28,4 @@ declare module 'search-index' {
 //     }>;
 //     DOCUMENT_COUNT: () => Promise<number>;
 //     FLUSH: () => Promise<void>;
-// };
-
-// export type SearchIndexOptions = {
-//     db?: any;
-//     cacheLength?: number;
-//     caseSensitive?: boolean;
-//     name?: string;
-//     tokenAppend?: string;
-//     stopwords?: string[];
 // };

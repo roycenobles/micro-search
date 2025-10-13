@@ -3,6 +3,10 @@ export type Document = {
     [key: string]: any;
 };
 
+export type IndexDocument = Omit<Document, "id"> &  {
+    _id: string;
+};
+
 // export type Field = string | string[];
 
 // export type RangeValue = {
