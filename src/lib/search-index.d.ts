@@ -1,6 +1,6 @@
 declare module "search-index" {
   export type IndexOptions = {
-    db?: any;
+    db?: unknown;
     cacheLength?: number;
     caseSensitive?: boolean;
     name?: string;
