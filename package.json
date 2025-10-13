@@ -20,5 +20,8 @@
   },
   "devDependencies": {
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "search-index": "^6.0.1"
   }
 }
