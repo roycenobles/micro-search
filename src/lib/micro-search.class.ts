@@ -1,17 +1,17 @@
 import { Query, QueryResponse } from "./micro-search.types";
 import { Document } from "./micro-search.types";
 
-export class MicroSearch<T extends Object> {
+export class MicroSearch<T extends Document> {
 
     constructor(indexPath: string) {
 
     }
 
-    public index(docs: Document<T>[]): void {
+    public index(docs: Document[]): void {
         throw new Error("Method not implemented.");
     }
 
-    public indexOne(doc: Document<T>): void {
+    public indexOne(doc: Document): void {
         this.index([doc]);
     }
 

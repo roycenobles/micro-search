@@ -1,7 +1,7 @@
-export type Document<T extends Object> = {
+export type Document = {
     id: string;
 };
 
 export type Query = {};
 
-export type QueryResponse<T extends Object> = {};
+export type QueryResponse<T extends Document> = {};
