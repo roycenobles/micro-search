@@ -1,5 +1,5 @@
-export type Document = {};
+export type Document<T extends Object> = {};
 
 export type Query = {};
 
-export type QueryResponse = {};
+export type QueryResponse<T extends Object> = {};
