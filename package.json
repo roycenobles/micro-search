@@ -18,11 +18,10 @@
     "esm": true
   },
   "scripts": {
-    "build": "tsc",
-    "test": "tsx src/test.ts"
+    "build": "rm -rf ./dist && tsc",
+    "test": "npx tsx src/test.ts"
   },
   "devDependencies": {
-    "tsx": "^4.19.1",
     "typescript": "^5.9.3"
   },
   "dependencies": {
