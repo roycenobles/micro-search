@@ -8,22 +8,47 @@ export class MicroSearch<T extends Document> {
     this.index = new SearchIndex({ name: indexPath });
   }
 
-  // todo: implement delete method
-
-  public async put(doc: T): Promise<void> {
-    await this.putAll([doc]);
+  public async count(): Promise<number> {
+    return this.index.DOCUMENT_COUNT();
   }
 
-  public async putAll(docs: T[]): Promise<void> {
+  public async delete(doc: T): Promise<void> {
+    await this.deleteMany([doc]);
+  }
+
+  public async deleteMany(docs: T[]): Promise<void> {
+    console.log({
+      message: "Deleting documents",
+      docs,
+    });
+    
+    const result = await this.index.DELETE(docs.map(({ id }) => id));
+
+    console.log({
+      message: "Deleted documents",
+      result,
+    });
+  }
+
+  public async flush(): Promise<void> {
+    await this.index.FLUSH();
+  }
+
+  public async put(doc: T): Promise<void> {
+    await this.putMany([doc]);
+  }
+
+  public async putMany(docs: T[]): Promise<void> {
     await this.index.PUT(
-      docs.map(({ id, ...properties }) => ({ _id: id, ...properties }))
+      docs.map(({ id, ...properties }) => ({ _id: id, ...properties })),
+      { storeVectors: true }
     );
   }
 
   public async query(query: QueryRequest): Promise<QueryResponse<T>> {
     let { QUERY, PAGE, SORT } = query;
 
-    QUERY = (!QUERY) ? { FIELD: "publishedAt" } : QUERY;
+    QUERY = !QUERY ? { FIELD: "publishedAt" } : QUERY;
 
     const params = {
       ...(SORT && { SORT }),
@@ -38,17 +63,14 @@ export class MicroSearch<T extends Document> {
       }
     );
 
-    return this.mapQueryResponse(response);
+    return this.toQueryResponse(response);
   }
 
-  private mapQueryResponse(response: any): QueryResponse<T> {
+  private toQueryResponse(response: any): QueryResponse<T> {
     return {
       results: response.RESULT.map((item: any) => {
         const { _id, publishedAt, ...properties } = item._doc;
-        return {
-          id: _id,
-          ...properties,
-        } as T;
+        return { id: _id, ...properties } as T;
       }),
       pages: {
         total: response.PAGING.TOTAL,
