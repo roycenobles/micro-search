@@ -109,21 +109,26 @@ describe("MicroSearch", () => {
         "Clean Code: A Handbook of Agile Software Craftsmanship"
       );
     });
+
+    it("should handle AND queries to further filter results", async () => {
+      const request: QueryRequest = {
+        QUERY: {
+          AND: [
+            { FIELD: "author", VALUE: "David" },
+            { FIELD: "tags", VALUE: "continuous" },
+          ],
+        },
+      };
+
+      const response = await ms.query(request);
+
+      expect(response.results.length).toBe(1);
+
+      expect(response.results[0].author).toBe("Jez Humble, David Farley");
+      expect(response.results[0].title).toBe("Continuous Delivery");
+      expect(response.results[0].tags).toContain("continuous delivery");
+    });
   });
-
-  //   it("should handle AND queries", async () => {
-  //     const request: QueryRequest = {
-  //       QUERY: {
-  //         AND: [
-  //           { FIELD: "author", VALUE: "John Doe" },
-  //           { FIELD: "tags", VALUE: "programming" },
-  //         ],
-  //       },
-  //     };
-
-  //     const result = await search.query(request);
-  //     expect(result.results).toBeDefined();
-  //   });
 
   //   it("should handle OR queries", async () => {
   //     const request: QueryRequest = {
