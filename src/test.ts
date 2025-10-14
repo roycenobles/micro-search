@@ -36,15 +36,17 @@ async function example() {
   ];
 
   try {
-    // Index documents (properly typed)
     await search.putAll(posts);
 
     console.log("Documents indexed successfully");
 
     // search all fields for terms "typescript" and "powerful"
-    const results = await search.query(["typescript", "powerful"]);
-    
-    // const results = await search.getAllDocuments(100);
+    // const results = await search.query({ QUERY: ["typescript", "powerful"] });
+
+    const results = await search.query({
+      QUERY: "ALL_DOCUMENTS",
+      PAGE: { NUMBER: 0, SIZE: 1 },
+    });
 
     console.log(JSON.stringify(results, null, 2));
 

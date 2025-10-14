@@ -1,5 +1,5 @@
 import { SearchIndex } from "search-index";
-import { Document, QueryResponse } from "./micro-search.types.js";
+import { Document, QueryRequest, QueryResponse } from "./micro-search.types.js";
 
 export class MicroSearch<T extends Document> {
   private index: SearchIndex;
@@ -13,17 +13,30 @@ export class MicroSearch<T extends Document> {
   }
 
   public async putAll(docs: T[]): Promise<void> {
-    await this.index.PUT(docs.map(({ id, ...properties }) => ({ _id: id, ...properties })));
-  }
-
-  public async query(query: any): Promise<QueryResponse<T>> {
-    return this.mapQueryResponse(
-      await this.index.SEARCH(query, { DOCUMENTS: true })
+    await this.index.PUT(
+      docs.map(({ id, ...properties }) => ({ _id: id, ...properties }))
     );
   }
 
-  private async queryAll(limit: number = 100): Promise<QueryResponse<T>> {
-    return this.mapQueryResponse(await this.index.ALL_DOCUMENTS(limit));
+  public async query(query: QueryRequest): Promise<QueryResponse<T>> {
+    let { QUERY, PAGE, SORT } = query;
+
+    QUERY = QUERY === "ALL_DOCUMENTS" ? { FIELD: "id" } : QUERY;
+
+    const params = {
+      ...(SORT && { SORT }),
+      ...(PAGE && { PAGE }),
+    };
+
+    const response = await this.index.SEARCH(
+      Array.isArray(QUERY) ? QUERY : [QUERY],
+      {
+        DOCUMENTS: true,
+        ...params,
+      }
+    );
+
+    return this.mapQueryResponse(response);
   }
 
   private mapQueryResponse(response: any): QueryResponse<T> {
@@ -35,9 +48,11 @@ export class MicroSearch<T extends Document> {
           ...properties,
         } as T;
       }),
-      found: response.PAGING.TOTAL,
-      offset: response.PAGING.DOC_OFFSET,
-      limit: response.PAGING.SIZE,
+      pages: {
+        total: response.PAGING.TOTAL,
+        current: response.PAGING.DOC_OFFSET,
+        size: response.PAGING.SIZE,
+      }
     };
   }
 }
