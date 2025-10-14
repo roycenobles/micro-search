@@ -8,6 +8,8 @@ export class MicroSearch<T extends Document> {
     this.index = new SearchIndex({ name: indexPath });
   }
 
+  // todo: implement delete method
+
   public async put(doc: T): Promise<void> {
     await this.putAll([doc]);
   }
@@ -52,37 +54,7 @@ export class MicroSearch<T extends Document> {
         total: response.PAGING.TOTAL,
         current: response.PAGING.DOC_OFFSET,
         size: response.PAGING.SIZE,
-      }
+      },
     };
   }
 }
-
-//   public async query(query: Query): Promise<QueryResponse<T>> {
-//     const index = await this._index;
-
-//     const searchResult = await index.SEARCH(query);
-
-//     return {
-//       results: searchResult.RESULT.map((item) => {
-//         // If documents are stored, return the document with id
-//         if (item._doc) {
-//           return { ...item._doc, id: item._id } as T;
-//         }
-//         // Otherwise just return the id (you may need to fetch separately)
-//         return { id: item._id } as T;
-//       }),
-//       totalHits: searchResult.RESULT_LENGTH,
-//     };
-//   }
-
-//   public async getDocumentCount(): Promise<number> {
-//     const index = await this._index;
-
-//     return await index.DOCUMENT_COUNT();
-//   }
-
-//   public async delete(docIds: string[]): Promise<void> {
-//     const index = await this._index;
-
-//     await index.DELETE(...docIds);
-//   }
