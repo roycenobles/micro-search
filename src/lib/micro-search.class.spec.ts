@@ -62,34 +62,39 @@ describe("MicroSearch", () => {
     });
   });
 
-  // describe("query", () => {
-  //   beforeAll(async () => {
-  //     // Index test documents before each query test
+  describe("query", () => {
+    beforeAll(async () => {
+      await ms.flush();
+      await ms.putMany(TestDocuments);
+    });
 
-  //   });
+    it("should execute a default query when no QUERY is provided", async () => {
+      const request: QueryRequest = {};
 
-  //   it("should execute a default query when no QUERY is provided", async () => {
-  //     const request: QueryRequest = {};
+      const response = await ms.query(request);
 
-  //     await search.putAll(TestDocuments);
+      expect(Array.isArray(response.results)).toBe(true);
+      expect(typeof response.pages).toBe("object");
 
-  //     const result = await search.query(request);
+      // uses default page size of 20
+      expect(response.results.length).toBe(20);
+      expect(response.pages.size).toBe(20);
+      expect(response.pages.current).toBe(0);
+      expect(response.pages.total).toBe(2);
+    });
 
-  //     console.log(result);
+    it("should handle field-specific search", async () => {
+      const request: QueryRequest = {
+        QUERY: { FIELD: "author", VALUE: "Robert" },
+      };
 
-  //     expect(result).toHaveProperty("results");
-  //     expect(result).toHaveProperty("pages");
+      const response = await ms.query(request);
 
-  //     expect(Array.isArray(result.results)).toBe(true);
-  //     expect(typeof result.pages).toBe("object");
-
-  //     expect(result.pages.size).toBe(20); // default
-  //     expect(result.pages.current).toBe(0); // default
-  //     expect(result.pages.total).toBe(0); // no pages
-
-  //     // expect(result.results.length).toBe(20); // all returned
-
-  //   });
+      expect(response.results.length).toBe(1);
+      expect(response.results[0].author).toBe("Robert C. Martin");
+      expect(response.results[0].title).toBe("Clean Code: A Handbook of Agile Software Craftsmanship");
+    });
+  });
 
   //   it("should return properly structured response", async () => {
   //     const request: QueryRequest = {
@@ -103,15 +108,6 @@ describe("MicroSearch", () => {
   //     expect(result.pages).toHaveProperty("total");
   //     expect(result.pages).toHaveProperty("current");
   //     expect(result.pages).toHaveProperty("size");
-  //   });
-
-  //   it("should handle field-specific search", async () => {
-  //     const request: QueryRequest = {
-  //       QUERY: { FIELD: "author", VALUE: "John Doe" },
-  //     };
-
-  //     const result = await search.query(request);
-  //     expect(result.results).toBeDefined();
   //   });
 
   //   it("should handle simple string query", async () => {
