@@ -1,47 +1,13 @@
+import { TestDocument, TestDocuments } from './micro-search.class.assets.js';
 import { MicroSearch } from './micro-search.class.js';
 import { Document, QueryRequest } from './micro-search.types.js';
 import * as fs from 'fs';
 
-// Define test document interface
-interface TestDocument extends Document {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-  tags: string[];
-  publishedAt: string;
-}
 
 describe('MicroSearch', () => {
   let microSearch: MicroSearch<TestDocument>;
   let indexPath: string;
   const testIndices: string[] = [];
-  const testDocuments: TestDocument[] = [
-    {
-      id: '1',
-      title: 'Getting Started with TypeScript',
-      content: 'TypeScript is a powerful superset of JavaScript...',
-      author: 'John Doe',
-      tags: ['typescript', 'programming'],
-      publishedAt: '2024-01-15'
-    },
-    {
-      id: '2',
-      title: 'Advanced Search Techniques',
-      content: 'Search engines use various algorithms...',
-      author: 'Jane Smith',
-      tags: ['search', 'algorithms'],
-      publishedAt: '2024-01-20'
-    },
-    {
-      id: '3',
-      title: 'JavaScript Best Practices',
-      content: 'Learn the best practices for writing clean JavaScript code...',
-      author: 'John Doe',
-      tags: ['javascript', 'programming'],
-      publishedAt: '2024-01-10'
-    }
-  ];
 
   beforeEach(() => {
     // Create a unique test index name that will be created in a temp location
@@ -92,7 +58,7 @@ describe('MicroSearch', () => {
 
   describe('put', () => {
     it('should index a single document', async () => {
-      await expect(microSearch.put(testDocuments[0])).resolves.not.toThrow();
+      await expect(microSearch.put(TestDocuments[0])).resolves.not.toThrow();
     });
 
     it('should handle documents with required id field', async () => {
@@ -111,7 +77,7 @@ describe('MicroSearch', () => {
 
   describe('putAll', () => {
     it('should index multiple documents', async () => {
-      await expect(microSearch.putAll(testDocuments)).resolves.not.toThrow();
+      await expect(microSearch.putAll(TestDocuments)).resolves.not.toThrow();
     });
 
     it('should handle empty array', async () => {
@@ -119,14 +85,14 @@ describe('MicroSearch', () => {
     });
 
     it('should handle single document in array', async () => {
-      await expect(microSearch.putAll([testDocuments[0]])).resolves.not.toThrow();
+      await expect(microSearch.putAll([TestDocuments[0]])).resolves.not.toThrow();
     });
   });
 
   describe('query', () => {
     beforeEach(async () => {
       // Index test documents before each query test
-      await microSearch.putAll(testDocuments);
+      await microSearch.putAll(TestDocuments);
     });
 
     it('should execute a default query when no QUERY is provided', async () => {
