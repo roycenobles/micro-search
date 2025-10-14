@@ -29,8 +29,14 @@ export class MicroSearch<T extends Document> {
   }
 
   public async putMany(docs: T[]): Promise<void> {
+    const _indexed = new Date().toISOString();
+
     await this.index.PUT(
-      docs.map(({ id, ...properties }) => ({ _id: id, ...properties })),
+      docs.map(({ id, ...properties }) => ({
+        _id: id,
+        _indexed,
+        ...properties,
+      })),
       { storeVectors: true }
     );
   }
@@ -38,7 +44,7 @@ export class MicroSearch<T extends Document> {
   public async query(query: QueryRequest): Promise<QueryResponse<T>> {
     let { QUERY, PAGE, SORT } = query;
 
-    QUERY = !QUERY ? { FIELD: "publishedAt" } : QUERY;
+    QUERY = !QUERY ? { FIELD: "_indexed" } : QUERY;
 
     const params = {
       ...(SORT && { SORT }),
@@ -59,7 +65,7 @@ export class MicroSearch<T extends Document> {
   private toQueryResponse(response: any): QueryResponse<T> {
     return {
       results: response.RESULT.map((item: any) => {
-        const { _id, publishedAt, ...properties } = item._doc;
+        const { _id, _indexed, ...properties } = item._doc;
         return { id: _id, ...properties } as T;
       }),
       pages: {
