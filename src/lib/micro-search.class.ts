@@ -23,7 +23,7 @@ export class MicroSearch<T extends Document> {
   public async query(query: QueryRequest): Promise<QueryResponse<T>> {
     let { QUERY, PAGE, SORT } = query;
 
-    QUERY = QUERY === "ALL_DOCUMENTS" ? { FIELD: "publishedAt" } : QUERY;
+    QUERY = (!QUERY) ? { FIELD: "publishedAt" } : QUERY;
 
     const params = {
       ...(SORT && { SORT }),

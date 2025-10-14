@@ -43,7 +43,7 @@ export type Token =
   | NOTQuery;
 
 export type QueryRequest = {
-  QUERY: Token | "ALL_DOCUMENTS";
+  QUERY?: Token;
   SORT?: {
     FIELD: string;
     DIRECTION: "DESCENDING" | "ASCENDING";

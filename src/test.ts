@@ -43,10 +43,8 @@ async function example() {
     // search all fields for terms "typescript" and "powerful"
     // const results = await search.query({ QUERY: ["typescript", "powerful"] });
 
-    const results = await search.query({
-      QUERY: "ALL_DOCUMENTS",
-      PAGE: { NUMBER: 0, SIZE: 1 },
-    });
+    // slightly more deliberate search all documents
+    const results = await search.query({ PAGE: { NUMBER: 0, SIZE: 1 } });
 
     console.log(JSON.stringify(results, null, 2));
 
