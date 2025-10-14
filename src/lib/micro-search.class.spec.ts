@@ -83,6 +83,19 @@ describe("MicroSearch", () => {
       expect(response.pages.total).toBe(2);
     });
 
+    it("should handle simple string query across all fields", async () => {
+      const request: QueryRequest = {
+        QUERY: "typescript",
+      };
+
+      const response = await ms.query(request);
+
+      expect(response.results.length).toBe(1);
+      expect(response.results[0].title).toBe("Effective TypeScript");
+      expect(response.results[0].author).toBe("Dan Vanderkam");
+      expect(response.results[0].tags).toContain("typescript");
+    });
+
     it("should handle field-specific search", async () => {
       const request: QueryRequest = {
         QUERY: { FIELD: "author", VALUE: "Robert" },
@@ -92,32 +105,11 @@ describe("MicroSearch", () => {
 
       expect(response.results.length).toBe(1);
       expect(response.results[0].author).toBe("Robert C. Martin");
-      expect(response.results[0].title).toBe("Clean Code: A Handbook of Agile Software Craftsmanship");
+      expect(response.results[0].title).toBe(
+        "Clean Code: A Handbook of Agile Software Craftsmanship"
+      );
     });
   });
-
-  //   it("should return properly structured response", async () => {
-  //     const request: QueryRequest = {
-  //       QUERY: { FIELD: "author", VALUE: "John Doe" },
-  //     };
-
-  //     const result = await search.query(request);
-
-  //     expect(result).toHaveProperty("results");
-  //     expect(result).toHaveProperty("pages");
-  //     expect(result.pages).toHaveProperty("total");
-  //     expect(result.pages).toHaveProperty("current");
-  //     expect(result.pages).toHaveProperty("size");
-  //   });
-
-  //   it("should handle simple string query", async () => {
-  //     const request: QueryRequest = {
-  //       QUERY: "typescript",
-  //     };
-
-  //     const result = await search.query(request);
-  //     expect(result.results).toBeDefined();
-  //   });
 
   //   it("should handle AND queries", async () => {
   //     const request: QueryRequest = {
