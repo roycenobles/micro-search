@@ -29,36 +29,38 @@ describe("MicroSearch", () => {
     });
 
     it("should delete multiple documents by ID", async () => {
-      await expect(ms.deleteMany([TestDocuments[0], TestDocuments[1]])).resolves.not.toThrow();
+      await expect(
+        ms.deleteMany([TestDocuments[0], TestDocuments[1]])
+      ).resolves.not.toThrow();
       await expect(ms.count()).resolves.toBe(TestDocuments.length - 2);
     });
   });
 
-  // describe("put", () => {
-  //   beforeEach(async () => {
-  //     //await ms.flush();
-  //   });
+  describe("put", () => {
+    beforeEach(async () => {
+      await ms.flush();
+    });
 
-  //   it("should index a single document", async () => {
-  //     await expect(ms.put(TestDocuments[0])).resolves.not.toThrow();
-  //     await expect(ms.count()).resolves.toBe(1);
-  //   });
+    it("should index a single document", async () => {
+      await expect(ms.put(TestDocuments[0])).resolves.not.toThrow();
+      await expect(ms.count()).resolves.toBe(1);
+    });
 
-  //   it("should index multiple documents", async () => {
-  //     await expect(ms.putMany(TestDocuments)).resolves.not.toThrow();
-  //     await expect(ms.count()).resolves.toBe(TestDocuments.length);
-  //   });
+    it("should index multiple documents", async () => {
+      await expect(ms.putMany(TestDocuments)).resolves.not.toThrow();
+      await expect(ms.count()).resolves.toBe(TestDocuments.length);
+    });
 
-  //   it("should handle single document in array", async () => {
-  //     await expect(ms.putMany([TestDocuments[0]])).resolves.not.toThrow();
-  //     await expect(ms.count()).resolves.toBe(1);
-  //   });
+    it("should handle single document in array", async () => {
+      await expect(ms.putMany([TestDocuments[0]])).resolves.not.toThrow();
+      await expect(ms.count()).resolves.toBe(1);
+    });
 
-  //   it("should handle empty array", async () => {
-  //     await expect(ms.putMany([])).resolves.not.toThrow();
-  //     await expect(ms.count()).resolves.toBe(0);
-  //   });
-  // });
+    it("should handle empty array", async () => {
+      await expect(ms.putMany([])).resolves.not.toThrow();
+      await expect(ms.count()).resolves.toBe(0);
+    });
+  });
 
   // describe("query", () => {
   //   beforeAll(async () => {
