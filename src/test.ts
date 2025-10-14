@@ -40,6 +40,8 @@ async function example() {
 
     console.log("Documents indexed successfully");
 
+    // todo: setup jest tests for these examples
+
     // search all fields for terms "typescript" and "powerful"
     // const results = await search.query({ QUERY: ["typescript", "powerful"] });
 
