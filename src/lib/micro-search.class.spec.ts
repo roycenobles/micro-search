@@ -27,6 +27,11 @@ describe("MicroSearch", () => {
       await expect(ms.delete(TestDocuments[0])).resolves.not.toThrow();
       await expect(ms.count()).resolves.toBe(TestDocuments.length - 1);
     });
+
+    it("should delete multiple documents by ID", async () => {
+      await expect(ms.deleteMany([TestDocuments[0], TestDocuments[1]])).resolves.not.toThrow();
+      await expect(ms.count()).resolves.toBe(TestDocuments.length - 2);
+    });
   });
 
   // describe("put", () => {
