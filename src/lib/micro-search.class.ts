@@ -17,17 +17,7 @@ export class MicroSearch<T extends Document> {
   }
 
   public async deleteMany(docs: T[]): Promise<void> {
-    console.log({
-      message: "Deleting documents",
-      docs,
-    });
-    
-    const result = await this.index.DELETE(docs.map(({ id }) => id));
-
-    console.log({
-      message: "Deleted documents",
-      result,
-    });
+    const result = await (this.index.DELETE as any)(...docs.map(({ id }) => id));
   }
 
   public async flush(): Promise<void> {
