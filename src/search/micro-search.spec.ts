@@ -19,7 +19,7 @@ describe("MicroSearch", () => {
 
   describe("delete", () => {
     beforeEach(async () => {
-      await ms.flush();
+      await ms.truncate();
       await ms.putMany(ProgrammingBooks, { skipTokenization: ["published"] });
     });
 
@@ -38,7 +38,7 @@ describe("MicroSearch", () => {
 
   describe("put", () => {
     beforeEach(async () => {
-      await ms.flush();
+      await ms.truncate();
     });
 
     it("should index a single document", async () => {
@@ -64,7 +64,7 @@ describe("MicroSearch", () => {
 
   describe("query", () => {
     beforeAll(async () => {
-      await ms.flush();
+      await ms.truncate();
       await ms.putMany(ProgrammingBooks, { skipTokenization: ["published"] });
     });
 
