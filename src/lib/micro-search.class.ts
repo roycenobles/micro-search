@@ -112,9 +112,9 @@ export class MicroSearch<T extends Document> {
         const { _id, _indexed, ...properties } = item._doc;
         return { id: _id, ...properties } as T;
       }),
-      pages: {
-        total: response.PAGING.TOTAL,
-        current: response.PAGING.DOC_OFFSET,
+      paging: {
+        pages: response.PAGING.TOTAL,
+        offset: response.PAGING.DOC_OFFSET,
         size: response.PAGING.SIZE,
       },
     };

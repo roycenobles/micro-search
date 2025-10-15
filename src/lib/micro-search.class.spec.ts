@@ -74,13 +74,13 @@ describe("MicroSearch", () => {
       const response = await ms.query(request);
 
       expect(Array.isArray(response.results)).toBe(true);
-      expect(typeof response.pages).toBe("object");
+      expect(typeof response.paging).toBe("object");
 
       // uses default page size of 20
       expect(response.results.length).toBe(20);
-      expect(response.pages.size).toBe(20);
-      expect(response.pages.current).toBe(0);
-      expect(response.pages.total).toBe(2);
+      expect(response.paging.size).toBe(20);
+      expect(response.paging.offset).toBe(0);
+      expect(response.paging.pages).toBe(2);
     });
 
     it("should handle simple string query across all fields", async () => {
@@ -181,7 +181,7 @@ describe("MicroSearch", () => {
         },
         SCORE: {
           FIELD: "published",
-          TYPE: "VALUE"
+          TYPE: "VALUE",
         },
         SORT: {
           DIRECTION: "ASCENDING",
@@ -207,7 +207,7 @@ describe("MicroSearch", () => {
         },
         SCORE: {
           FIELD: "published",
-          TYPE: "VALUE"
+          TYPE: "VALUE",
         },
         SORT: {
           DIRECTION: "DESCENDING",
@@ -222,46 +222,85 @@ describe("MicroSearch", () => {
       expect(result.results[1].published).toBe("2008-05-15");
     });
 
-    it("should handle numeric fields", async () => {
-      // const request: QueryRequest = {
-      //   QUERY: {
-      //     FIELD: "publishedYear",
-      //     VALUE: {
-      //       GTE: "2008",
-      //       LTE: "2008",
-      //     },
-      //   },
-      //   SORT: {
-      //     FIELD: "publishedYear",
-      //     DIRECTION: "DESCENDING",
-      //     TYPE: "NUMERIC",
-      //   },
-      // };
-      // const result = await ms.query(request);
-      // console.log(result);
+    it("should handle sorting numeric fields", async () => {
+      const request: QueryRequest = {
+        QUERY: {
+          FIELD: "publishedYear",
+          VALUE: {
+            GTE: 1999,
+            LTE: 2001,
+          },
+        },
+        SCORE: {
+          FIELD: "publishedYear",
+          TYPE: "VALUE",
+        },
+        SORT: {
+          DIRECTION: "DESCENDING",
+          TYPE: "NUMERIC",
+        },
+      };
+
+      const result = await ms.query(request);
+
+      expect(result.results.length).toBe(3);
+      expect(result.results[0].publishedYear).toBe(2001);
+      expect(result.results[1].publishedYear).toBe(1999);
+      expect(result.results[2].publishedYear).toBe(1999);
+    });
+
+    it("should handle basic pagination", async () => {
+      let result = await ms.query({
+        PAGE: {
+          NUMBER: 0, // first page
+          SIZE: 10,
+        },
+      });
+
+      expect(result.results.length).toBe(10);
+      
+      expect(result.paging.size).toBe(10);
+      expect(result.paging.offset).toBe(0);
+      expect(result.paging.pages).toBe(3);
+
+      result = await ms.query({
+        PAGE: {
+          NUMBER: 1, // second page
+          SIZE: 10,
+        },
+      });
+
+      expect(result.results.length).toBe(10);
+
+      expect(result.paging.size).toBe(10);
+      expect(result.paging.offset).toBe(10);
+      expect(result.paging.pages).toBe(3);
+
+      result = await ms.query({
+        PAGE: {
+          NUMBER: 2, // third page
+          SIZE: 10,
+        },
+      });
+
+      expect(result.results.length).toBe(10);
+
+      expect(result.paging.size).toBe(10);
+      expect(result.paging.offset).toBe(20);
+      expect(result.paging.pages).toBe(3);
+
+      result = await ms.query({
+        PAGE: {
+          NUMBER: 3, // fourth page
+          SIZE: 10,
+        },
+      });
+
+      expect(result.results.length).toBe(0); // no more results
+
+      expect(result.paging.size).toBe(10);
+      expect(result.paging.offset).toBe(30);
+      expect(result.paging.pages).toBe(3);
     });
   });
-
-  //   it("should handle PAGE parameter", async () => {
-  //     const request: QueryRequest = {
-  //       PAGE: {
-  //         NUMBER: 1,
-  //         SIZE: 10,
-  //       },
-  //     };
-
-  //     const result = await search.query(request);
-  //     expect(result.results).toBeDefined();
-  //     expect(result.pages).toBeDefined();
-  //   });
-  // });
-
-  // describe("error handling", () => {
-  //   it("should handle invalid documents gracefully", async () => {
-  //     const invalidDoc = { title: "Missing ID" } as TestDocument;
-  //     // The current implementation doesn't validate document structure,
-  //     // so this test just ensures it doesn't crash
-  //     await expect(search.put(invalidDoc)).resolves.not.toThrow();
-  //   });
-  // });
 });

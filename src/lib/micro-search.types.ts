@@ -60,9 +60,9 @@ export type QueryRequest = {
 
 export type QueryResponse<T extends Document> = {
   results: T[];
-  pages: {
-    total: number;
-    current: number;
+  paging: {
+    pages: number;
+    offset: number;
     size: number;
   };
 };
