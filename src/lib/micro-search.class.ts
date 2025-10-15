@@ -76,7 +76,7 @@ export class MicroSearch<T extends Document> {
   }
 
   public async query(query: QueryRequest): Promise<QueryResponse<T>> {
-    let { QUERY, PAGE, SORT } = query;
+    let { QUERY, PAGE, SCORE, SORT } = query;
 
     QUERY = !QUERY ? { FIELD: "_indexed" } : QUERY;
 
@@ -84,10 +84,12 @@ export class MicroSearch<T extends Document> {
       ...(PAGE && { PAGE }),
     };
 
-    // Convert MicroSearch SORT format to search-index format
     if (SORT) {
+      params.SCORE = {
+        FIELD: SCORE?.FIELD,
+        TYPE: SCORE?.TYPE || "VALUE"
+      };
       params.SORT = {
-        FIELD: SORT.FIELD,
         DIRECTION: SORT.DIRECTION,
         TYPE: SORT.TYPE
       };

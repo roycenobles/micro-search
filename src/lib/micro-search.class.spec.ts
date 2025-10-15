@@ -170,7 +170,7 @@ describe("MicroSearch", () => {
       );
     });
 
-    it("should handle SORT parameter", async () => {
+    it("should handle ascending sort on dates", async () => {
       const request: QueryRequest = {
         QUERY: {
           FIELD: "published",
@@ -179,8 +179,11 @@ describe("MicroSearch", () => {
             LTE: "2008-12-31",
           },
         },
-        SORT: {
+        SCORE: {
           FIELD: "published",
+          TYPE: "VALUE"
+        },
+        SORT: {
           DIRECTION: "ASCENDING",
           TYPE: "ALPHABETIC",
         },
@@ -191,6 +194,32 @@ describe("MicroSearch", () => {
       expect(result.results.length).toBe(2);
       expect(result.results[0].published).toBe("2008-05-15");
       expect(result.results[1].published).toBe("2008-08-01");
+    });
+
+    it("should handle descending sort on dates", async () => {
+      const request: QueryRequest = {
+        QUERY: {
+          FIELD: "published",
+          VALUE: {
+            GTE: "2008-01-01",
+            LTE: "2008-12-31",
+          },
+        },
+        SCORE: {
+          FIELD: "published",
+          TYPE: "VALUE"
+        },
+        SORT: {
+          DIRECTION: "DESCENDING",
+          TYPE: "ALPHABETIC",
+        },
+      };
+
+      const result = await ms.query(request);
+
+      expect(result.results.length).toBe(2);
+      expect(result.results[0].published).toBe("2008-08-01");
+      expect(result.results[1].published).toBe("2008-05-15");
     });
 
     it("should handle numeric fields", async () => {
