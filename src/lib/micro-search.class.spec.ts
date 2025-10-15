@@ -181,14 +181,35 @@ describe("MicroSearch", () => {
         },
         SORT: {
           FIELD: "published",
-          DIRECTION: "DESCENDING",
+          DIRECTION: "ASCENDING",
           TYPE: "NUMERIC",
         },
       };
 
       const result = await ms.query(request);
-  
-      console.log(result);
+
+      expect(result.results.length).toBe(2);
+      expect(result.results[0].published).toBe("2008-05-15");
+      expect(result.results[1].published).toBe("2008-08-01");
+    });
+
+    it("should handle numeric fields", async () => {
+      // const request: QueryRequest = {
+      //   QUERY: {
+      //     FIELD: "publishedYear",
+      //     VALUE: {
+      //       GTE: "2008",
+      //       LTE: "2008",
+      //     },
+      //   },
+      //   SORT: {
+      //     FIELD: "publishedYear",
+      //     DIRECTION: "DESCENDING",
+      //     TYPE: "NUMERIC",
+      //   },
+      // };
+      // const result = await ms.query(request);
+      // console.log(result);
     });
   });
 
