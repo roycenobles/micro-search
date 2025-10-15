@@ -1,8 +1,9 @@
 {
-    "cSpell.words": [
-        "LOWCASE",
-        "NGRAMS",
-        "nodenext",
-        "stopwords"
-    ]
+    "editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.codeActionsOnSave": {
+		"source.removeUnusedImports": "explicit"
+	},
+	"explorer.fileNesting.enabled": false,
+	"cSpell.words": ["LOWCASE", "NGRAMS", "nodenext", "stopwords"]
 }

@@ -8,15 +8,15 @@ export type Field = string | string[];
  * Used for existence checks.
  */
 export type FieldOnlyToken = {
-  FIELD: Field;
+	FIELD: Field;
 };
 
 /**
  * A token representing a field and a value or range to search against.
  */
 export type FieldValueToken = {
-  FIELD: Field;
-  VALUE: string | Range;
+	FIELD: Field;
+	VALUE: string | Range;
 };
 
 /**
@@ -24,42 +24,35 @@ export type FieldValueToken = {
  * Used for range queries in FieldValueToken.
  */
 export type Range = {
-  GTE: string | number;
-  LTE: string | number;
+	GTE: string | number;
+	LTE: string | number;
 };
 
 /**
  * A token representing an AND logical operation on an array of tokens.
  */
 export type ANDQuery = {
-  AND: Token[];
+	AND: Token[];
 };
 
 /**
  * A token representing an OR logical operation on an array of tokens.
  */
 export type ORQuery = {
-  OR: Token[];
+	OR: Token[];
 };
 
 /**
  * A token representing a NOT logical operation with include and exclude tokens.
  */
 export type NOTQuery = {
-  NOT: {
-    INCLUDE: Token;
-    EXCLUDE: Token;
-  };
+	NOT: {
+		INCLUDE: Token;
+		EXCLUDE: Token;
+	};
 };
 
 /**
  * A token can be a Field, FieldValueToken, FieldOnlyToken, ANDQuery, ORQuery, or NOTQuery.
  */
-export type Token =
-  | Field
-  | FieldValueToken
-  | FieldOnlyToken
-  | ANDQuery
-  | ORQuery
-  | NOTQuery;
-
+export type Token = Field | FieldValueToken | FieldOnlyToken | ANDQuery | ORQuery | NOTQuery;

@@ -5,29 +5,29 @@
  * https://www.npmjs.com/package/search-index
  */
 declare module "search-index" {
-  /**
-   * Options for initializing the search index.
-   */
-  export type IndexOptions = {
-    db?: unknown;
-    cacheLength?: number;
-    caseSensitive?: boolean;
-    name?: string;
-    stopwords?: string[];
-  };
+	/**
+	 * Options for initializing the search index.
+	 */
+	export type IndexOptions = {
+		db?: unknown;
+		cacheLength?: number;
+		caseSensitive?: boolean;
+		name?: string;
+		stopwords?: string[];
+	};
 
-  /**
-   * Class representing a search index.
-   */
-  export class SearchIndex {
-    constructor(options: IndexOptions);
-    CREATED(): Promise<string>;
-    DELETE(ids: string[]): Promise<any[]>;
-    DOCUMENT_COUNT(): Promise<number>;
-    FLUSH(): Promise<void>;
-    LAST_UPDATED(): Promise<number>;
-    PUT(documents: any[], options?: any): Promise<void>;
-    ALL_DOCUMENTS(limit: number): Promise<any>;
-    SEARCH(query: any, options?: any): Promise<any>;
-  }
+	/**
+	 * Class representing a search index.
+	 */
+	export class SearchIndex {
+		constructor(options: IndexOptions);
+		CREATED(): Promise<string>;
+		DELETE(ids: string[]): Promise<any[]>;
+		DOCUMENT_COUNT(): Promise<number>;
+		FLUSH(): Promise<void>;
+		LAST_UPDATED(): Promise<number>;
+		PUT(documents: any[], options?: any): Promise<void>;
+		ALL_DOCUMENTS(limit: number): Promise<any>;
+		SEARCH(query: any, options?: any): Promise<any>;
+	}
 }
