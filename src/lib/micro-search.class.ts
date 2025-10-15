@@ -28,6 +28,8 @@ export class MicroSearch<T extends Document> {
     await this.putMany([doc]);
   }
 
+  // todo: improve this behavior. it should be easier to range query on date fields, etc.
+
   public async putMany(docs: T[], options?: { skipTokenization?: string[] }): Promise<void> {
     const _indexed = new Date().toISOString();
 
