@@ -4,7 +4,6 @@ declare module "search-index" {
     cacheLength?: number;
     caseSensitive?: boolean;
     name?: string;
-    tokenAppend?: string;
     stopwords?: string[];
   };
 
