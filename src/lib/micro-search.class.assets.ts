@@ -6,6 +6,7 @@ export interface TestDocument extends Document {
   content: string;
   author: string;
   tags: string[];
+  published: string;
 }
 
 export const TestDocuments: TestDocument[] = [
@@ -16,6 +17,7 @@ export const TestDocuments: TestDocument[] = [
       "Clean Code teaches principles and best practices for writing clean, maintainable code.",
     author: "Robert C. Martin",
     tags: ["clean code", "software", "best practices"],
+    published: "2008-08-01",
   },
   {
     id: "b2f3e4a5-2222-3333-4444-555566667777",
@@ -24,6 +26,7 @@ export const TestDocuments: TestDocument[] = [
       "A guide to pragmatic thinking and effective software development.",
     author: "Andrew Hunt, David Thomas",
     tags: ["pragmatic", "software", "development"],
+    published: "1999-10-20",
   },
   {
     id: "c3a4b5c6-3333-4444-5555-666677778888",
@@ -32,6 +35,7 @@ export const TestDocuments: TestDocument[] = [
       "Classic book introducing design patterns for object-oriented programming.",
     author: "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides",
     tags: ["design patterns", "object-oriented", "software"],
+    published: "1994-10-31",
   },
   {
     id: "d4b5c6d7-4444-5555-6666-777788889999",
@@ -40,6 +44,7 @@ export const TestDocuments: TestDocument[] = [
       "Techniques for refactoring code to improve its structure and readability.",
     author: "Martin Fowler",
     tags: ["refactoring", "code quality", "software"],
+    published: "1999-07-08",
   },
   {
     id: "e5c6d7e8-5555-6666-7777-888899990000",
@@ -47,6 +52,7 @@ export const TestDocuments: TestDocument[] = [
     content: "Deep dive into JavaScript core concepts and mechanics.",
     author: "Kyle Simpson",
     tags: ["javascript", "programming", "js"],
+    published: "2020-01-28",
   },
   {
     id: "f6d7e8f9-6666-7777-8888-999900001111",
@@ -55,6 +61,7 @@ export const TestDocuments: TestDocument[] = [
     author:
       "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein",
     tags: ["algorithms", "data structures", "computer science"],
+    published: "1990-09-01",
   },
   {
     id: "a7e8f9a0-7777-8888-9999-000011112222",
@@ -62,6 +69,7 @@ export const TestDocuments: TestDocument[] = [
     content: "Best practices and tips for writing effective Java code.",
     author: "Joshua Bloch",
     tags: ["java", "best practices", "programming"],
+    published: "2001-05-08",
   },
   {
     id: "b8f9a0b1-8888-9999-0000-111122223333",
@@ -69,6 +77,7 @@ export const TestDocuments: TestDocument[] = [
     content: "A practical handbook of software construction.",
     author: "Steve McConnell",
     tags: ["software", "construction", "best practices"],
+    published: "1993-06-09",
   },
   {
     id: "c9a0b1c2-9999-0000-1111-222233334444",
@@ -76,6 +85,7 @@ export const TestDocuments: TestDocument[] = [
     content: "Classic introduction to computer science using Scheme.",
     author: "Harold Abelson, Gerald Jay Sussman",
     tags: ["computer science", "scheme", "programming"],
+    published: "1985-01-01",
   },
   {
     id: "d0b1c2d3-0000-1111-2222-333344445555",
@@ -83,6 +93,7 @@ export const TestDocuments: TestDocument[] = [
     content: "Strategies for maintaining and improving legacy codebases.",
     author: "Michael Feathers",
     tags: ["legacy code", "maintenance", "refactoring"],
+    published: "2004-09-22",
   },
   {
     id: "e1c2d3e4-1111-2222-3333-444455556666",
@@ -90,6 +101,7 @@ export const TestDocuments: TestDocument[] = [
     content: "A visually rich guide to learning design patterns.",
     author: "Eric Freeman, Bert Bates, Kathy Sierra, Elisabeth Robson",
     tags: ["design patterns", "object-oriented", "software"],
+    published: "2004-10-25",
   },
   {
     id: "f2d3e4f5-2222-3333-4444-555566667777",
@@ -97,6 +109,7 @@ export const TestDocuments: TestDocument[] = [
     content: "Essays on programming techniques and problem solving.",
     author: "Jon Bentley",
     tags: ["programming", "techniques", "problem solving"],
+    published: "1986-01-01",
   },
   {
     id: "a3e4f5a6-3333-4444-5555-666677778888",
@@ -104,6 +117,7 @@ export const TestDocuments: TestDocument[] = [
     content: "Comprehensive reference on algorithms and programming theory.",
     author: "Donald E. Knuth",
     tags: ["algorithms", "computer science", "theory"],
+    published: "1968-01-01",
   },
   {
     id: "b4f5a6b7-4444-5555-6666-777788889999",
@@ -111,6 +125,7 @@ export const TestDocuments: TestDocument[] = [
     content: "A focused look at the best features of JavaScript.",
     author: "Douglas Crockford",
     tags: ["javascript", "programming", "js"],
+    published: "2008-05-15",
   },
   {
     id: "c5a6b7c8-5555-6666-7777-888899990000",
@@ -118,6 +133,7 @@ export const TestDocuments: TestDocument[] = [
     content: "Introduction to test-driven development techniques.",
     author: "Kent Beck",
     tags: ["testing", "tdd", "software"],
+    published: "2002-11-08",
   },
   {
     id: "d6b7c8d9-6666-7777-8888-999900001111",
@@ -126,6 +142,7 @@ export const TestDocuments: TestDocument[] = [
       "Principles and practices for delivering software rapidly and reliably.",
     author: "Jez Humble, David Farley",
     tags: ["continuous delivery", "devops", "software"],
+    published: "2010-07-27",
   },
   {
     id: "e7c8d9e0-7777-8888-9999-000011112222",
@@ -133,6 +150,7 @@ export const TestDocuments: TestDocument[] = [
     content: "Essays on software engineering and project management.",
     author: "Frederick P. Brooks Jr.",
     tags: ["software engineering", "project management", "essays"],
+    published: "1975-01-01",
   },
   {
     id: "f8d9e0f1-8888-9999-0000-111122223333",
@@ -140,6 +158,7 @@ export const TestDocuments: TestDocument[] = [
     content: "Textbook covering automata, computability, and complexity.",
     author: "Michael Sipser",
     tags: ["computation", "theory", "computer science"],
+    published: "1996-01-01",
   },
   {
     id: "a9e0f1a2-9999-0000-1111-222233334444",
@@ -147,6 +166,7 @@ export const TestDocuments: TestDocument[] = [
     content: "A fast-paced introduction to Python programming.",
     author: "Eric Matthes",
     tags: ["python", "programming", "introduction"],
+    published: "2015-11-01",
   },
   {
     id: "b0f1a2b3-0000-1111-2222-333344445555",
@@ -154,6 +174,7 @@ export const TestDocuments: TestDocument[] = [
     content: "Best practices for using TypeScript effectively.",
     author: "Dan Vanderkam",
     tags: ["typescript", "best practices", "programming"],
+    published: "2019-10-15",
   },
   {
     id: "c1d2e3f4-1111-2222-3333-444455556677",
@@ -161,6 +182,7 @@ export const TestDocuments: TestDocument[] = [
     content: "Classic introduction to the C programming language.",
     author: "Brian W. Kernighan, Dennis M. Ritchie",
     tags: ["c", "programming", "language"],
+    published: "1978-02-22",
   },
   {
     id: "d2e3f4a5-2222-3333-4444-555566667788",
@@ -168,6 +190,7 @@ export const TestDocuments: TestDocument[] = [
     content: "A catalog of patterns for enterprise software architecture.",
     author: "Martin Fowler",
     tags: ["architecture", "enterprise", "patterns"],
+    published: "2002-11-15",
   },
   {
     id: "e3f4a5b6-3333-4444-5555-666677778899",
@@ -175,6 +198,7 @@ export const TestDocuments: TestDocument[] = [
     content: "Principles and patterns for domain-driven design.",
     author: "Eric Evans",
     tags: ["domain-driven design", "architecture", "software"],
+    published: "2003-08-20",
   },
   {
     id: "f4a5b6c7-4444-5555-6666-777788889900",
@@ -182,6 +206,7 @@ export const TestDocuments: TestDocument[] = [
     content: "A comprehensive introduction to programming language theory.",
     author: "Bertrand Meyer",
     tags: ["programming languages", "theory", "computer science"],
+    published: "1990-01-01",
   },
   {
     id: "a5b6c7d8-5555-6666-7777-888899990011",
@@ -189,6 +214,7 @@ export const TestDocuments: TestDocument[] = [
     content: "A practical guide to systems programming with Rust.",
     author: "Jim Blandy, Jason Orendorff",
     tags: ["rust", "systems programming", "language"],
+    published: "2017-12-10",
   },
   {
     id: "b6c7d8e9-6666-7777-8888-999900001122",
@@ -196,6 +222,7 @@ export const TestDocuments: TestDocument[] = [
     content: "A modern introduction to programming in JavaScript.",
     author: "Marijn Haverbeke",
     tags: ["javascript", "programming", "web"],
+    published: "2011-12-14",
   },
   {
     id: "c7d8e9f0-7777-8888-9999-000011112233",
@@ -203,6 +230,7 @@ export const TestDocuments: TestDocument[] = [
     content: "Comprehensive guide to Git version control.",
     author: "Scott Chacon, Ben Straub",
     tags: ["git", "version control", "software"],
+    published: "2009-08-01",
   },
   {
     id: "d8e9f0a1-8888-9999-0000-111122223344",
@@ -210,6 +238,7 @@ export const TestDocuments: TestDocument[] = [
     content: "A playful introduction to recursive programming in Scheme.",
     author: "Daniel P. Friedman, Matthias Felleisen",
     tags: ["scheme", "recursion", "functional programming"],
+    published: "1974-01-01",
   },
   {
     id: "e9f0a1b2-9999-0000-1111-222233334455",
@@ -217,6 +246,7 @@ export const TestDocuments: TestDocument[] = [
     content: "A guide to functional programming with Elixir.",
     author: "Dave Thomas",
     tags: ["elixir", "functional programming", "language"],
+    published: "2014-07-01",
   },
   {
     id: "f0a1b2c3-0000-1111-2222-333344445566",
@@ -224,5 +254,6 @@ export const TestDocuments: TestDocument[] = [
     content: "An illustrated guide for learning algorithms.",
     author: "Aditya Bhargava",
     tags: ["algorithms", "illustrated", "computer science"],
+    published: "2016-05-01",
   },
 ];

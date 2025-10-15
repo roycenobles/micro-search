@@ -128,49 +128,69 @@ describe("MicroSearch", () => {
       expect(response.results[0].title).toBe("Continuous Delivery");
       expect(response.results[0].tags).toContain("continuous delivery");
     });
+
+    it("should handle OR queries to broaden search", async () => {
+      const request: QueryRequest = {
+        QUERY: {
+          OR: [
+            { FIELD: "title", VALUE: "TypeScript" },
+            { FIELD: "title", VALUE: "JavaScript" },
+          ],
+        },
+      };
+
+      const response = await ms.query(request);
+
+      expect(response.results.length).toBe(3);
+
+      const titles = response.results.map((doc) => doc.title);
+
+      expect(titles).toContain("Effective TypeScript");
+      expect(titles).toContain("JavaScript: The Good Parts");
+      expect(titles).toContain("Eloquent JavaScript");
+    });
+
+    it("should handle range queries", async () => {
+      const request: QueryRequest = {
+        QUERY: {
+          FIELD: "published",
+          VALUE: {
+            GTE: "1994-01-01",
+            LTE: "1994-12-31",
+          },
+        },
+      };
+
+      const result = await ms.query(request);
+
+      expect(result.results.length).toBe(1);
+      expect(result.results[0].id).toBe("c3a4b5c6-3333-4444-5555-666677778888");
+      expect(result.results[0].title).toBe(
+        "Design Patterns: Elements of Reusable Object-Oriented Software"
+      );
+    });
+
+    it("should handle SORT parameter", async () => {
+      const request: QueryRequest = {
+        QUERY: {
+          FIELD: "published",
+          VALUE: {
+            GTE: "2008",
+            LTE: "2008",
+          },
+        },
+        SORT: {
+          FIELD: "published",
+          DIRECTION: "DESCENDING",
+          TYPE: "NUMERIC",
+        },
+      };
+
+      const result = await ms.query(request);
+  
+      console.log(result);
+    });
   });
-
-  //   it("should handle OR queries", async () => {
-  //     const request: QueryRequest = {
-  //       QUERY: {
-  //         OR: [
-  //           { FIELD: "title", VALUE: "TypeScript" },
-  //           { FIELD: "title", VALUE: "JavaScript" },
-  //         ],
-  //       },
-  //     };
-
-  //     const result = await search.query(request);
-  //     expect(result.results).toBeDefined();
-  //   });
-
-  //   it("should handle range queries", async () => {
-  //     const request: QueryRequest = {
-  //       QUERY: {
-  //         FIELD: "publishedAt",
-  //         VALUE: {
-  //           GTE: "2024-01-01",
-  //           LTE: "2024-12-31",
-  //         },
-  //       },
-  //     };
-
-  //     const result = await search.query(request);
-  //     expect(result.results).toBeDefined();
-  //   });
-
-  //   it("should handle SORT parameter", async () => {
-  //     const request: QueryRequest = {
-  //       SORT: {
-  //         FIELD: "publishedAt",
-  //         DIRECTION: "DESCENDING",
-  //         TYPE: "ALPHABETIC",
-  //       },
-  //     };
-
-  //     const result = await search.query(request);
-  //     expect(result.results).toBeDefined();
-  //   });
 
   //   it("should handle PAGE parameter", async () => {
   //     const request: QueryRequest = {
