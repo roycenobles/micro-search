@@ -131,7 +131,6 @@ describe("MicroSearch Types", () => {
         SORT: {
           FIELD: "publishedAt",
           DIRECTION: "DESCENDING",
-          TYPE: "ALPHABETIC",
         },
         PAGE: {
           NUMBER: 1,
@@ -160,15 +159,15 @@ describe("MicroSearch Types", () => {
             content: "Test content",
           },
         ],
-        pages: {
-          total: 1,
-          current: 0,
+        paging: {
+          pages: 1,
+          offset: 0,
           size: 10,
         },
       };
 
       expect(response.results).toHaveLength(1);
-      expect(response.pages.total).toBe(1);
+      expect(response.paging.pages).toBe(1);
       expect(response.results[0].id).toBe("1");
     });
   });
