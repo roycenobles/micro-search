@@ -1,5 +1,6 @@
+import { Document } from "../types/document.js";
+
 import {
-  Document,
   Field,
   FieldOnlyToken,
   FieldValueToken,

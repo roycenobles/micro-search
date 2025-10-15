@@ -1,7 +1,4 @@
-export type Document = {
-  id: string;
-  [key: string]: any;
-};
+import { Document } from "../types/document.js";
 
 export type Field = string | string[];
 

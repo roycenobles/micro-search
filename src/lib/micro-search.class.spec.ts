@@ -1,4 +1,4 @@
-import { TestDocument, TestDocuments } from "./micro-search.class.assets.js";
+import { TestDocument, TestDocuments } from "./micro-search.assets.js";
 import { MicroSearch } from "./micro-search.class.js";
 import { v4 as uuid } from "uuid";
 import fs from "fs";

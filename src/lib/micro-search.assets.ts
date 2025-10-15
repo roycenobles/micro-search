@@ -1,4 +1,4 @@
-import { Document } from "./micro-search.types.js";
+import { Document } from "../types/document.js";
 
 export interface TestDocument extends Document {
   id: string;

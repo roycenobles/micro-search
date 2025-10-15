@@ -10,7 +10,11 @@
     "isolatedModules": true,
     "declaration": true,
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "baseUrl": "./src",
+    "paths": {
+      "@types/*": ["types/*"]
+    }
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
