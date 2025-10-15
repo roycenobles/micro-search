@@ -16,7 +16,7 @@ interface TestDoc extends Document {
   content: string;
 }
 
-describe("MicroSearch Types", () => {
+describe("Types", () => {
   describe("Document", () => {
     it("should define a valid Document interface", () => {
       const doc: TestDoc = {
