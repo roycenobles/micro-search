@@ -1,8 +1,8 @@
+import fs from "fs";
+import { v4 as uuid } from "uuid";
+import { QueryRequest } from "../types/queries.js";
 import { TestDocument, TestDocuments } from "./micro-search.assets.js";
 import { MicroSearch } from "./micro-search.class.js";
-import { v4 as uuid } from "uuid";
-import fs from "fs";
-import { QueryRequest } from "./micro-search.types.js";
 
 describe("MicroSearch", () => {
   let ms: MicroSearch<TestDocument>;
@@ -143,7 +143,7 @@ describe("MicroSearch", () => {
 
       expect(response.results.length).toBe(3);
 
-      const titles = response.results.map((doc) => doc.title);
+      const titles = response.results.map((doc: TestDocument) => doc.title);
 
       expect(titles).toContain("Effective TypeScript");
       expect(titles).toContain("JavaScript: The Good Parts");

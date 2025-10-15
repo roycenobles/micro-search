@@ -1,4 +1,4 @@
-import { Document } from "../types/document.js";
+import { Document } from "../types/documents.js";
 
 export interface TestDocument extends Document {
   id: string;

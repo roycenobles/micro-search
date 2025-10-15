@@ -1,16 +1,14 @@
-import { Document } from "../types/document.js";
-
-import { Range } from "../types/range.js";
+import { Document } from "./documents.js";
+import { QueryRequest, QueryResponse } from "./queries.js";
 import {
+  ANDQuery,
   Field,
   FieldOnlyToken,
   FieldValueToken,
-  ANDQuery,
-  ORQuery,
   NOTQuery,
-  QueryRequest,
-  QueryResponse,
-} from "./micro-search.types.js";
+  ORQuery,
+  Range,
+} from "./tokens.js";
 
 interface TestDoc extends Document {
   id: string;

@@ -1,6 +1,6 @@
 import { SearchIndex } from "search-index";
-import { Document } from "../types/document.js";
-import {  QueryRequest, QueryResponse } from "./micro-search.types.js";
+import { Document } from "../types/documents.js";
+import { QueryRequest, QueryResponse } from "../types/queries.js";
 
 export class MicroSearch<T extends Document> {
   private index: SearchIndex;
