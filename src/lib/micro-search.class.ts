@@ -80,10 +80,18 @@ export class MicroSearch<T extends Document> {
 
     QUERY = !QUERY ? { FIELD: "_indexed" } : QUERY;
 
-    const params = {
-      ...(SORT && { SORT }),
+    const params: any = {
       ...(PAGE && { PAGE }),
     };
+
+    // Convert MicroSearch SORT format to search-index format
+    if (SORT) {
+      params.SORT = {
+        FIELD: SORT.FIELD,
+        DIRECTION: SORT.DIRECTION,
+        TYPE: SORT.TYPE
+      };
+    }
 
     const response = await this.index.SEARCH(
       Array.isArray(QUERY) ? QUERY : [QUERY],

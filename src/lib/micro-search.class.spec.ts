@@ -182,7 +182,7 @@ describe("MicroSearch", () => {
         SORT: {
           FIELD: "published",
           DIRECTION: "ASCENDING",
-          TYPE: "NUMERIC",
+          TYPE: "ALPHABETIC",
         },
       };
 
