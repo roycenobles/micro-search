@@ -1,4 +1,13 @@
+/**
+ * Type definitions for search-index 6.0.
+ * These are a simplified version of the full type definitions.
+ * For more detailed types, refer to the official documentation of search-index.
+ * https://www.npmjs.com/package/search-index
+ */
 declare module "search-index" {
+  /**
+   * Options for initializing the search index.
+   */
   export type IndexOptions = {
     db?: unknown;
     cacheLength?: number;
@@ -7,6 +16,9 @@ declare module "search-index" {
     stopwords?: string[];
   };
 
+  /**
+   * Class representing a search index.
+   */
   export class SearchIndex {
     constructor(options: IndexOptions);
     CREATED(): Promise<string>;
