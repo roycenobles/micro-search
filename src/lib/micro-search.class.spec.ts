@@ -179,13 +179,9 @@ describe("MicroSearch", () => {
             LTE: "2008-12-31",
           },
         },
-        SCORE: {
-          FIELD: "published",
-          TYPE: "VALUE",
-        },
         SORT: {
+          FIELD: "published",
           DIRECTION: "ASCENDING",
-          TYPE: "ALPHABETIC",
         },
       };
 
@@ -205,13 +201,9 @@ describe("MicroSearch", () => {
             LTE: "2008-12-31",
           },
         },
-        SCORE: {
-          FIELD: "published",
-          TYPE: "VALUE",
-        },
         SORT: {
+          FIELD: "published",
           DIRECTION: "DESCENDING",
-          TYPE: "ALPHABETIC",
         },
       };
 
@@ -231,13 +223,9 @@ describe("MicroSearch", () => {
             LTE: 2001,
           },
         },
-        SCORE: {
-          FIELD: "publishedYear",
-          TYPE: "VALUE",
-        },
         SORT: {
+          FIELD: "publishedYear",
           DIRECTION: "DESCENDING",
-          TYPE: "NUMERIC",
         },
       };
 
@@ -258,7 +246,7 @@ describe("MicroSearch", () => {
       });
 
       expect(result.results.length).toBe(10);
-      
+
       expect(result.paging.size).toBe(10);
       expect(result.paging.offset).toBe(0);
       expect(result.paging.pages).toBe(3);

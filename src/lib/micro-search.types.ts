@@ -44,13 +44,9 @@ export type Token =
 
 export type QueryRequest = {
   QUERY?: Token;
-  SCORE?: {
-    FIELD: string;
-    TYPE: "VALUE"
-  }
   SORT?: {
+    FIELD: string;
     DIRECTION: "DESCENDING" | "ASCENDING";
-    TYPE: "NUMERIC" | "ALPHABETIC";
   };
   PAGE?: {
     NUMBER: number;

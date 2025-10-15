@@ -28,9 +28,10 @@ export class MicroSearch<T extends Document> {
     await this.putMany([doc]);
   }
 
-  // todo: improve this behavior. it should be easier to range query on date fields, etc.
-
-  public async putMany(docs: T[], options?: { skipTokenization?: string[] }): Promise<void> {
+  public async putMany(
+    docs: T[],
+    options?: { skipTokenization?: string[] }
+  ): Promise<void> {
     const _indexed = new Date().toISOString();
 
     const {
@@ -55,13 +56,10 @@ export class MicroSearch<T extends Document> {
       {
         storeVectors: true,
         tokenizer: (tokens: any, field: any, ops: any) => {
-          // For the "published" field, return the whole value as a single token to enable range queries
           if (options?.skipTokenization?.includes(field)) {
-            // Return token in the format expected by search-index: [[token, score]]
             return Promise.resolve([[tokens, "1.00"]]);
           }
 
-          // Normal tokenization for other fields
           return SPLIT([tokens, field, ops])
             .then(SKIP)
             .then(LOWCASE)
@@ -76,37 +74,23 @@ export class MicroSearch<T extends Document> {
   }
 
   public async query(query: QueryRequest): Promise<QueryResponse<T>> {
-    let { QUERY, PAGE, SCORE, SORT } = query;
+    let { QUERY, PAGE, SORT } = query;
 
     QUERY = !QUERY ? { FIELD: "_indexed" } : QUERY;
 
     const params: any = {
       ...(PAGE && { PAGE }),
+      ...(SORT && {
+        SCORE: { FIELD: SORT.FIELD, TYPE: "VALUE" },
+        SORT: { DIRECTION: SORT.DIRECTION, TYPE: "ALPHABETIC" },
+      }),
     };
-
-    if (SORT) {
-      params.SCORE = {
-        FIELD: SCORE?.FIELD,
-        TYPE: SCORE?.TYPE || "VALUE"
-      };
-      params.SORT = {
-        DIRECTION: SORT.DIRECTION,
-        TYPE: SORT.TYPE
-      };
-    }
 
     const response = await this.index.SEARCH(
       Array.isArray(QUERY) ? QUERY : [QUERY],
-      {
-        DOCUMENTS: true,
-        ...params,
-      }
+      { DOCUMENTS: true, ...params }
     );
 
-    return this.toQueryResponse(response);
-  }
-
-  private toQueryResponse(response: any): QueryResponse<T> {
     return {
       results: response.RESULT.map((item: any) => {
         const { _id, _indexed, ...properties } = item._doc;
