@@ -28,16 +28,48 @@ export class MicroSearch<T extends Document> {
     await this.putMany([doc]);
   }
 
-  public async putMany(docs: T[]): Promise<void> {
+  public async putMany(docs: T[], options?: { skipTokenization?: string[] }): Promise<void> {
     const _indexed = new Date().toISOString();
 
-    await this.index.PUT(
+    const {
+      PUT,
+      TOKENIZATION_PIPELINE_STAGES: {
+        SPLIT,
+        SKIP,
+        LOWCASE,
+        REPLACE,
+        NGRAMS,
+        STOPWORDS,
+        SCORE_TERM_FREQUENCY,
+      },
+    } = this.index as any;
+
+    await PUT(
       docs.map(({ id, ...properties }) => ({
         _id: id,
         _indexed,
         ...properties,
       })),
-      { storeVectors: true }
+      {
+        storeVectors: true,
+        tokenizer: (tokens: any, field: any, ops: any) => {
+          // For the "published" field, return the whole value as a single token to enable range queries
+          if (options?.skipTokenization?.includes(field)) {
+            // Return token in the format expected by search-index: [[token, score]]
+            return Promise.resolve([[tokens, "1.00"]]);
+          }
+
+          // Normal tokenization for other fields
+          return SPLIT([tokens, field, ops])
+            .then(SKIP)
+            .then(LOWCASE)
+            .then(REPLACE)
+            .then(NGRAMS)
+            .then(STOPWORDS)
+            .then(SCORE_TERM_FREQUENCY)
+            .then(([tokens, field, ops]: any) => tokens);
+        },
+      }
     );
   }
 

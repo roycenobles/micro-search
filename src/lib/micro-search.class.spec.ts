@@ -20,7 +20,7 @@ describe("MicroSearch", () => {
   describe("delete", () => {
     beforeEach(async () => {
       await ms.flush();
-      await ms.putMany(TestDocuments);
+      await ms.putMany(TestDocuments, { skipTokenization: ["published"] });
     });
 
     it("should delete a document by ID", async () => {
@@ -65,7 +65,7 @@ describe("MicroSearch", () => {
   describe("query", () => {
     beforeAll(async () => {
       await ms.flush();
-      await ms.putMany(TestDocuments);
+      await ms.putMany(TestDocuments, { skipTokenization: ["published"] });
     });
 
     it("should execute a default query when no QUERY is provided", async () => {
@@ -175,8 +175,8 @@ describe("MicroSearch", () => {
         QUERY: {
           FIELD: "published",
           VALUE: {
-            GTE: "2008",
-            LTE: "2008",
+            GTE: "2008-01-01",
+            LTE: "2008-12-31",
           },
         },
         SORT: {
