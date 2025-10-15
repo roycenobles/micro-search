@@ -20,7 +20,7 @@ describe("MicroSearch", () => {
   describe("delete", () => {
     beforeEach(async () => {
       await ms.truncate();
-      await ms.putMany(ProgrammingBooks, { skipTokenization: ["published"] });
+      await ms.putMany(ProgrammingBooks, ["published"]);
     });
 
     it("should delete a document by ID", async () => {
@@ -65,7 +65,7 @@ describe("MicroSearch", () => {
   describe("query", () => {
     beforeAll(async () => {
       await ms.truncate();
-      await ms.putMany(ProgrammingBooks, { skipTokenization: ["published"] });
+      await ms.putMany(ProgrammingBooks, ["published"]);
     });
 
     it("should execute a default query when no QUERY is provided", async () => {

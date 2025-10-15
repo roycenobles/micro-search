@@ -41,7 +41,7 @@ export class MicroSearch<T extends Document> {
   public async deleteMany(docs: T[]): Promise<void> {
     await (this.index.DELETE as any)(...docs.map(({ id }) => id));
   }
-  
+
   /**
    * Truncates the index, removing all documents.
    */
@@ -60,49 +60,28 @@ export class MicroSearch<T extends Document> {
   /**
    * Adds or updates many documents in the index.
    * @param docs The documents to add or update.
-   * @param options Optional settings for tokenization.
+   * @param keywords Fields to be treated as keywords (not tokenized).
    */
-  public async putMany(
-    docs: T[],
-    options?: { skipTokenization?: string[] }
-  ): Promise<void> {
+  public async putMany(docs: T[], keywords?: string[]): Promise<void> {
     const _indexed = new Date().toISOString();
 
-    const {
-      PUT,
-      TOKENIZATION_PIPELINE_STAGES: {
-        SPLIT,
-        SKIP,
-        LOWCASE,
-        REPLACE,
-        NGRAMS,
-        STOPWORDS,
-        SCORE_TERM_FREQUENCY,
-      },
-    } = this.index as any;
+    const { PUT, TOKENIZATION_PIPELINE_STAGES: STAGES } = this.index as any;
 
     await PUT(
-      docs.map(({ id, ...properties }) => ({
-        _id: id,
-        _indexed,
-        ...properties,
-      })),
+      docs.map(({ id, ...props }) => ({ _id: id, _indexed, ...props })),
       {
         storeVectors: true,
-        tokenizer: (tokens: any, field: any, ops: any) => {
-          if (options?.skipTokenization?.includes(field)) {
-            return Promise.resolve([[tokens, "1.00"]]);
-          }
-
-          return SPLIT([tokens, field, ops])
-            .then(SKIP)
-            .then(LOWCASE)
-            .then(REPLACE)
-            .then(NGRAMS)
-            .then(STOPWORDS)
-            .then(SCORE_TERM_FREQUENCY)
-            .then(([tokens, field, ops]: any) => tokens);
-        },
+        tokenizer: (tokens: any, field: any, ops: any) =>
+          keywords?.includes(field)
+            ? Promise.resolve([[tokens, "1.00"]])
+            : STAGES.SPLIT([tokens, field, ops])
+                .then(STAGES.SKIP)
+                .then(STAGES.LOWCASE)
+                .then(STAGES.REPLACE)
+                .then(STAGES.NGRAMS)
+                .then(STAGES.STOPWORDS)
+                .then(STAGES.SCORE_TERM_FREQUENCY)
+                .then(([t]: any) => t),
       }
     );
   }
@@ -113,9 +92,7 @@ export class MicroSearch<T extends Document> {
    * @returns The query response
    */
   public async query(query: QueryRequest): Promise<QueryResponse<T>> {
-    let { QUERY, PAGE, SORT } = query;
-
-    QUERY = !QUERY ? { FIELD: "_indexed" } : QUERY;
+    const { QUERY = { FIELD: "_indexed" }, PAGE, SORT } = query;
 
     const params: any = {
       ...(PAGE && { PAGE }),
@@ -131,10 +108,10 @@ export class MicroSearch<T extends Document> {
     );
 
     return {
-      RESULTS: response.RESULT.map((item: any) => {
-        const { _id, _indexed, ...properties } = item._doc;
-        return { id: _id, ...properties } as T;
-      }),
+      RESULTS: response.RESULT.map(
+        ({ _doc: { _id, _indexed, ...props } }: any) =>
+          ({ id: _id, ...props } as T)
+      ),
       PAGING: {
         PAGES: response.PAGING.TOTAL,
         OFFSET: response.PAGING.DOC_OFFSET,
