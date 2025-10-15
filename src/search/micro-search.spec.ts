@@ -110,7 +110,9 @@ describe("MicroSearch", () => {
 			const request: QueryRequest = {
 				QUERY: {
 					AND: [
+						// author is david farley and tags include continuous
 						{ FIELD: "author", VALUE: "David" },
+						{ FIELD: "author", VALUE: "Farley" },
 						{ FIELD: "tags", VALUE: "continuous" }
 					]
 				}
