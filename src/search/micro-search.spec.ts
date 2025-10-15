@@ -1,16 +1,16 @@
 import fs from "fs";
 import { v4 as uuid } from "uuid";
 import { QueryRequest } from "../types/queries.js";
-import { TestDocument, TestDocuments } from "./micro-search.assets.js";
+import { ProgrammingBook, ProgrammingBooks } from "../assets/programming-books.js";
 import { MicroSearch } from "./micro-search.class.js";
 
 describe("MicroSearch", () => {
-  let ms: MicroSearch<TestDocument>;
+  let ms: MicroSearch<ProgrammingBook>;
   let index: string;
 
   beforeAll(async () => {
     index = `./index/${uuid()}`;
-    ms = new MicroSearch<TestDocument>(index);
+    ms = new MicroSearch<ProgrammingBook>(index);
   });
 
   afterAll(() => {
@@ -20,19 +20,19 @@ describe("MicroSearch", () => {
   describe("delete", () => {
     beforeEach(async () => {
       await ms.flush();
-      await ms.putMany(TestDocuments, { skipTokenization: ["published"] });
+      await ms.putMany(ProgrammingBooks, { skipTokenization: ["published"] });
     });
 
     it("should delete a document by ID", async () => {
-      await expect(ms.delete(TestDocuments[0])).resolves.not.toThrow();
-      await expect(ms.count()).resolves.toBe(TestDocuments.length - 1);
+      await expect(ms.delete(ProgrammingBooks[0])).resolves.not.toThrow();
+      await expect(ms.count()).resolves.toBe(ProgrammingBooks.length - 1);
     });
 
     it("should delete multiple documents by ID", async () => {
       await expect(
-        ms.deleteMany([TestDocuments[0], TestDocuments[1]])
+        ms.deleteMany([ProgrammingBooks[0], ProgrammingBooks[1]])
       ).resolves.not.toThrow();
-      await expect(ms.count()).resolves.toBe(TestDocuments.length - 2);
+      await expect(ms.count()).resolves.toBe(ProgrammingBooks.length - 2);
     });
   });
 
@@ -42,17 +42,17 @@ describe("MicroSearch", () => {
     });
 
     it("should index a single document", async () => {
-      await expect(ms.put(TestDocuments[0])).resolves.not.toThrow();
+      await expect(ms.put(ProgrammingBooks[0])).resolves.not.toThrow();
       await expect(ms.count()).resolves.toBe(1);
     });
 
     it("should index multiple documents", async () => {
-      await expect(ms.putMany(TestDocuments)).resolves.not.toThrow();
-      await expect(ms.count()).resolves.toBe(TestDocuments.length);
+      await expect(ms.putMany(ProgrammingBooks)).resolves.not.toThrow();
+      await expect(ms.count()).resolves.toBe(ProgrammingBooks.length);
     });
 
     it("should handle single document in array", async () => {
-      await expect(ms.putMany([TestDocuments[0]])).resolves.not.toThrow();
+      await expect(ms.putMany([ProgrammingBooks[0]])).resolves.not.toThrow();
       await expect(ms.count()).resolves.toBe(1);
     });
 
@@ -65,7 +65,7 @@ describe("MicroSearch", () => {
   describe("query", () => {
     beforeAll(async () => {
       await ms.flush();
-      await ms.putMany(TestDocuments, { skipTokenization: ["published"] });
+      await ms.putMany(ProgrammingBooks, { skipTokenization: ["published"] });
     });
 
     it("should execute a default query when no QUERY is provided", async () => {
@@ -143,7 +143,7 @@ describe("MicroSearch", () => {
 
       expect(response.RESULTS.length).toBe(3);
 
-      const titles = response.RESULTS.map((doc: TestDocument) => doc.title);
+      const titles = response.RESULTS.map((doc: ProgrammingBook) => doc.title);
 
       expect(titles).toContain("Effective TypeScript");
       expect(titles).toContain("JavaScript: The Good Parts");

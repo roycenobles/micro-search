@@ -1,6 +1,6 @@
 import { Document } from "../types/documents.js";
 
-export interface TestDocument extends Document {
+export interface ProgrammingBook extends Document {
   id: string;
   title: string;
   content: string;
@@ -10,7 +10,7 @@ export interface TestDocument extends Document {
   publishedYear: number;
 }
 
-export const TestDocuments: TestDocument[] = [
+export const ProgrammingBooks: ProgrammingBook[] = [
   {
     id: "a1e2c3d4-1111-2222-3333-444455556666",
     title: "Clean Code: A Handbook of Agile Software Craftsmanship",
