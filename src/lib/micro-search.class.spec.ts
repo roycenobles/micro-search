@@ -73,14 +73,14 @@ describe("MicroSearch", () => {
 
       const response = await ms.query(request);
 
-      expect(Array.isArray(response.results)).toBe(true);
-      expect(typeof response.paging).toBe("object");
+      expect(Array.isArray(response.RESULTS)).toBe(true);
+      expect(typeof response.PAGING).toBe("object");
 
       // uses default page size of 20
-      expect(response.results.length).toBe(20);
-      expect(response.paging.size).toBe(20);
-      expect(response.paging.offset).toBe(0);
-      expect(response.paging.pages).toBe(2);
+      expect(response.RESULTS.length).toBe(20);
+      expect(response.PAGING.SIZE).toBe(20);
+      expect(response.PAGING.OFFSET).toBe(0);
+      expect(response.PAGING.PAGES).toBe(2);
     });
 
     it("should handle simple string query across all fields", async () => {
@@ -90,10 +90,10 @@ describe("MicroSearch", () => {
 
       const response = await ms.query(request);
 
-      expect(response.results.length).toBe(1);
-      expect(response.results[0].title).toBe("Effective TypeScript");
-      expect(response.results[0].author).toBe("Dan Vanderkam");
-      expect(response.results[0].tags).toContain("typescript");
+      expect(response.RESULTS.length).toBe(1);
+      expect(response.RESULTS[0].title).toBe("Effective TypeScript");
+      expect(response.RESULTS[0].author).toBe("Dan Vanderkam");
+      expect(response.RESULTS[0].tags).toContain("typescript");
     });
 
     it("should handle field-specific search", async () => {
@@ -103,9 +103,9 @@ describe("MicroSearch", () => {
 
       const response = await ms.query(request);
 
-      expect(response.results.length).toBe(1);
-      expect(response.results[0].author).toBe("Robert C. Martin");
-      expect(response.results[0].title).toBe(
+      expect(response.RESULTS.length).toBe(1);
+      expect(response.RESULTS[0].author).toBe("Robert C. Martin");
+      expect(response.RESULTS[0].title).toBe(
         "Clean Code: A Handbook of Agile Software Craftsmanship"
       );
     });
@@ -122,11 +122,11 @@ describe("MicroSearch", () => {
 
       const response = await ms.query(request);
 
-      expect(response.results.length).toBe(1);
+      expect(response.RESULTS.length).toBe(1);
 
-      expect(response.results[0].author).toBe("Jez Humble, David Farley");
-      expect(response.results[0].title).toBe("Continuous Delivery");
-      expect(response.results[0].tags).toContain("continuous delivery");
+      expect(response.RESULTS[0].author).toBe("Jez Humble, David Farley");
+      expect(response.RESULTS[0].title).toBe("Continuous Delivery");
+      expect(response.RESULTS[0].tags).toContain("continuous delivery");
     });
 
     it("should handle OR queries to broaden search", async () => {
@@ -141,9 +141,9 @@ describe("MicroSearch", () => {
 
       const response = await ms.query(request);
 
-      expect(response.results.length).toBe(3);
+      expect(response.RESULTS.length).toBe(3);
 
-      const titles = response.results.map((doc: TestDocument) => doc.title);
+      const titles = response.RESULTS.map((doc: TestDocument) => doc.title);
 
       expect(titles).toContain("Effective TypeScript");
       expect(titles).toContain("JavaScript: The Good Parts");
@@ -161,11 +161,11 @@ describe("MicroSearch", () => {
         },
       };
 
-      const result = await ms.query(request);
+      const response = await ms.query(request);
 
-      expect(result.results.length).toBe(1);
-      expect(result.results[0].id).toBe("c3a4b5c6-3333-4444-5555-666677778888");
-      expect(result.results[0].title).toBe(
+      expect(response.RESULTS.length).toBe(1);
+      expect(response.RESULTS[0].id).toBe("c3a4b5c6-3333-4444-5555-666677778888");
+      expect(response.RESULTS[0].title).toBe(
         "Design Patterns: Elements of Reusable Object-Oriented Software"
       );
     });
@@ -185,11 +185,11 @@ describe("MicroSearch", () => {
         },
       };
 
-      const result = await ms.query(request);
+      const response = await ms.query(request);
 
-      expect(result.results.length).toBe(2);
-      expect(result.results[0].published).toBe("2008-05-15");
-      expect(result.results[1].published).toBe("2008-08-01");
+      expect(response.RESULTS.length).toBe(2);
+      expect(response.RESULTS[0].published).toBe("2008-05-15");
+      expect(response.RESULTS[1].published).toBe("2008-08-01");
     });
 
     it("should handle descending sort on dates", async () => {
@@ -207,11 +207,11 @@ describe("MicroSearch", () => {
         },
       };
 
-      const result = await ms.query(request);
+      const response = await ms.query(request);
 
-      expect(result.results.length).toBe(2);
-      expect(result.results[0].published).toBe("2008-08-01");
-      expect(result.results[1].published).toBe("2008-05-15");
+      expect(response.RESULTS.length).toBe(2);
+      expect(response.RESULTS[0].published).toBe("2008-08-01");
+      expect(response.RESULTS[1].published).toBe("2008-05-15");
     });
 
     it("should handle sorting numeric fields", async () => {
@@ -229,66 +229,66 @@ describe("MicroSearch", () => {
         },
       };
 
-      const result = await ms.query(request);
+      const response = await ms.query(request);
 
-      expect(result.results.length).toBe(3);
-      expect(result.results[0].publishedYear).toBe(2001);
-      expect(result.results[1].publishedYear).toBe(1999);
-      expect(result.results[2].publishedYear).toBe(1999);
+      expect(response.RESULTS.length).toBe(3);
+      expect(response.RESULTS[0].publishedYear).toBe(2001);
+      expect(response.RESULTS[1].publishedYear).toBe(1999);
+      expect(response.RESULTS[2].publishedYear).toBe(1999);
     });
 
     it("should handle basic pagination", async () => {
-      let result = await ms.query({
+      let response = await ms.query({
         PAGE: {
           NUMBER: 0, // first page
           SIZE: 10,
         },
       });
 
-      expect(result.results.length).toBe(10);
+      expect(response.RESULTS.length).toBe(10);
 
-      expect(result.paging.size).toBe(10);
-      expect(result.paging.offset).toBe(0);
-      expect(result.paging.pages).toBe(3);
+      expect(response.PAGING.SIZE).toBe(10);
+      expect(response.PAGING.OFFSET).toBe(0);
+      expect(response.PAGING.PAGES).toBe(3);
 
-      result = await ms.query({
+      response = await ms.query({
         PAGE: {
           NUMBER: 1, // second page
           SIZE: 10,
         },
       });
 
-      expect(result.results.length).toBe(10);
+      expect(response.RESULTS.length).toBe(10);
 
-      expect(result.paging.size).toBe(10);
-      expect(result.paging.offset).toBe(10);
-      expect(result.paging.pages).toBe(3);
+      expect(response.PAGING.SIZE).toBe(10);
+      expect(response.PAGING.OFFSET).toBe(10);
+      expect(response.PAGING.PAGES).toBe(3);
 
-      result = await ms.query({
+      response = await ms.query({
         PAGE: {
           NUMBER: 2, // third page
           SIZE: 10,
         },
       });
 
-      expect(result.results.length).toBe(10);
+      expect(response.RESULTS.length).toBe(10);
 
-      expect(result.paging.size).toBe(10);
-      expect(result.paging.offset).toBe(20);
-      expect(result.paging.pages).toBe(3);
+      expect(response.PAGING.SIZE).toBe(10);
+      expect(response.PAGING.OFFSET).toBe(20);
+      expect(response.PAGING.PAGES).toBe(3);
 
-      result = await ms.query({
+      response = await ms.query({
         PAGE: {
           NUMBER: 3, // fourth page
           SIZE: 10,
         },
       });
 
-      expect(result.results.length).toBe(0); // no more results
+      expect(response.RESULTS.length).toBe(0); // no more results
 
-      expect(result.paging.size).toBe(10);
-      expect(result.paging.offset).toBe(30);
-      expect(result.paging.pages).toBe(3);
+      expect(response.PAGING.SIZE).toBe(10);
+      expect(response.PAGING.OFFSET).toBe(30);
+      expect(response.PAGING.PAGES).toBe(3);
     });
   });
 });

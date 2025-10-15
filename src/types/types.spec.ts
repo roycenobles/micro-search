@@ -151,23 +151,23 @@ describe("MicroSearch Types", () => {
   describe("QueryResponse", () => {
     it("should create valid query responses", () => {
       const response: QueryResponse<TestDoc> = {
-        results: [
+        RESULTS: [
           {
             id: "1",
             title: "Test Document",
             content: "Test content",
           },
         ],
-        paging: {
-          pages: 1,
-          offset: 0,
-          size: 10,
+        PAGING: {
+          PAGES: 1,
+          OFFSET: 0,
+          SIZE: 10,
         },
       };
 
-      expect(response.results).toHaveLength(1);
-      expect(response.paging.pages).toBe(1);
-      expect(response.results[0].id).toBe("1");
+      expect(response.RESULTS).toHaveLength(1);
+      expect(response.PAGING.PAGES).toBe(1);
+      expect(response.RESULTS[0].id).toBe("1");
     });
   });
 });

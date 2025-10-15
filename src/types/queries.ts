@@ -14,10 +14,10 @@ export type QueryRequest = {
 };
 
 export type QueryResponse<T extends Document> = {
-  results: T[];
-  paging: {
-    pages: number;
-    offset: number;
-    size: number;
+  RESULTS: T[];
+  PAGING: {
+    PAGES: number;
+    OFFSET: number;
+    SIZE: number;
   };
 };
