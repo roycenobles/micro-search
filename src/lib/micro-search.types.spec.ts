@@ -1,10 +1,10 @@
 import { Document } from "../types/document.js";
 
+import { Range } from "../types/range.js";
 import {
   Field,
   FieldOnlyToken,
   FieldValueToken,
-  RangeValue,
   ANDQuery,
   ORQuery,
   NOTQuery,
@@ -75,7 +75,7 @@ describe("MicroSearch Types", () => {
     });
 
     it("should accept range values", () => {
-      const rangeValue: RangeValue = {
+      const rangeValue: Range = {
         GTE: "2024-01-01",
         LTE: "2024-12-31",
       };

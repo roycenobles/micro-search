@@ -1,4 +1,5 @@
 import { Document } from "../types/document.js";
+import { Range } from "../types/range.js";
 
 export type Field = string | string[];
 
@@ -8,12 +9,7 @@ export type FieldOnlyToken = {
 
 export type FieldValueToken = {
   FIELD: Field;
-  VALUE: string | RangeValue;
-};
-
-export type RangeValue = {
-  GTE: string | number;
-  LTE: string | number;
+  VALUE: string | Range;
 };
 
 export type ANDQuery = {
