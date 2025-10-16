@@ -98,6 +98,7 @@ export class MicroSearch<T extends Document> {
 			...(PAGE && { PAGE }),
 			...(SORT && {
 				SCORE: { FIELD: SORT.FIELD, TYPE: "VALUE" },
+				// todo: support numeric sorting via type detection
 				SORT: { DIRECTION: SORT.DIRECTION, TYPE: "ALPHABETIC" }
 			})
 		};
@@ -105,7 +106,7 @@ export class MicroSearch<T extends Document> {
 		const response = await this.index.SEARCH(Array.isArray(QUERY) ? QUERY : [QUERY], { DOCUMENTS: true, ...params });
 
 		return {
-			RESULTS: response.RESULT.map(({ _doc: { _id, _indexed, ...props } }: any) => ({ id: _id, ...props }) as T),
+			RESULTS: response.RESULT.map(({ _doc: { _id, _indexed, ...props } }: any) => ({ id: _id, ...props } as T)),
 			PAGING: {
 				PAGES: response.PAGING.TOTAL,
 				OFFSET: response.PAGING.DOC_OFFSET,
