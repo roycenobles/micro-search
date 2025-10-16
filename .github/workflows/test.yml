@@ -1,0 +1,36 @@
+name: Test
+
+on:
+   workflow_call:
+      secrets:
+         BOT_ACCESS_TOKEN:
+            required: true
+
+   workflow_dispatch:
+
+   pull_request:
+      branches:
+         - main
+
+jobs:
+   test:
+      name: Test
+
+      runs-on: ubuntu-latest
+
+      env:
+         NPM_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
+
+      steps:
+         - name: Environment Setup
+           uses: Athian-ai/actions/environment-setup@main
+
+         - name: Test
+           run: npm run test
+
+         - name: Build
+           run: npm run build
+
+         - name: Notify
+           if: failure() && github.ref == 'refs/heads/main'
+           uses: Athian-ai/actions/notify-test-failed@main

@@ -1,0 +1,62 @@
+name: Release
+
+on:
+   push:
+      branches: [main]
+
+jobs:
+   test:
+      name: Test
+      uses: ./.github/workflows/test.yml
+      secrets:
+         BOT_ACCESS_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
+      concurrency:
+         group: initiate-release
+         cancel-in-progress: false
+
+   scan:
+      name: Scan
+      uses: ./.github/workflows/scan.yml
+      secrets:
+         BOT_ACCESS_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
+      concurrency:
+         group: initiate-release
+         cancel-in-progress: false
+
+   create-release:
+      name: Create a Semantic Release
+
+      needs: [test, scan]
+
+      concurrency:
+         group: initiate-release
+         cancel-in-progress: false
+
+      permissions:
+         contents: write
+         issues: write
+         pull-requests: write
+
+      runs-on: ubuntu-latest
+
+      outputs:
+         version: ${{ steps.semantic-release.outputs.version }}
+
+      env:
+         NPM_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
+
+      steps:
+         - name: Environment Setup
+           uses: Athian-ai/actions/environment-setup@main
+           with:
+              token: ${{ secrets.BOT_ACCESS_TOKEN }}
+              fetch-depth: 0
+
+         - name: Build
+           run: npm run build
+
+         - name: Release
+           id: semantic-release
+           uses: Athian-ai/actions/semantic-release@main
+           with:
+              token: ${{ secrets.BOT_ACCESS_TOKEN }}

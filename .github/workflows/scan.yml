@@ -1,0 +1,31 @@
+name: Scan
+
+on:
+   workflow_call:
+      secrets:
+         BOT_ACCESS_TOKEN:
+            required: true
+
+   workflow_dispatch:
+
+   schedule:
+      - cron: "0 */8 * * *"
+
+jobs:
+   scan:
+      name: Scan
+
+      runs-on: ubuntu-latest
+
+      env:
+         NPM_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
+
+      steps:
+         - name: Environment Setup
+           uses: Athian-ai/actions/environment-setup@main
+
+         - name: Run Dependency Check
+           uses: athian-ai/actions/dependency-check@main
+           with:
+              project: "micro-search"
+              path: "."
