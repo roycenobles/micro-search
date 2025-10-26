@@ -1,6 +1,9 @@
 {
-	"name": "micro-search",
+	"name": "@roycenobles/micro-search",
 	"version": "0.0.1",
+	"publishConfig": {
+		"access": "public"
+	},
 	"description": "A tiny search framework suitable for small to medium microservices",
 	"homepage": "https://github.com/roycenobles/micro-search#readme",
 	"bugs": {
