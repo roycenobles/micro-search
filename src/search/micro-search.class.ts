@@ -1,13 +1,8 @@
-import { createReadStream, createWriteStream } from "fs";
-import { access, mkdir, rm } from "fs/promises";
 import { MemoryLevel } from "memory-level";
-import { dirname } from "path";
 import { SearchIndex } from "search-index";
-import { Readable } from "stream";
-import { pipeline } from "stream/promises";
-import { createGunzip, createGzip } from "zlib";
 import { Document } from "../types/documents.js";
 import { QueryRequest, QueryResponse } from "../types/queries.js";
+import { IndexExport } from "./index-export.js";
 
 /**
  * A lightweight search engine for indexing and querying documents.
@@ -16,12 +11,12 @@ import { QueryRequest, QueryResponse } from "../types/queries.js";
  */
 export class MicroSearch<T extends Document> {
 	private readonly index: SearchIndex;
-	private readonly extract: string;
+	private readonly export: IndexExport;
 	private isDirty: boolean;
 
 	private constructor(indexPath: string) {
-		this.index = new SearchIndex({ name: indexPath, Level: MemoryLevel });
-		this.extract = `${indexPath}/index.gz`;
+		this.index = new SearchIndex({ Level: MemoryLevel });
+		this.export = new IndexExport(indexPath);
 		this.isDirty = false;
 	}
 
@@ -32,27 +27,18 @@ export class MicroSearch<T extends Document> {
 	 */
 	public static async create<T extends Document>(indexPath: string): Promise<MicroSearch<T>> {
 		const ms = new MicroSearch<T>(indexPath);
-
-		try {
-			await access(ms.extract);
-
-			const readStream = createReadStream(ms.extract);
-			const gunzip = createGunzip();
-
-			let unzipped = "";
-
-			for await (const chunk of readStream.pipe(gunzip)) {
-				unzipped += chunk.toString("utf8");
-			}
-
-			const indexData = JSON.parse(unzipped);
-
-			await ms.index.IMPORT(indexData);
-		} catch (err: any) {
-			if (err.code !== "ENOENT") throw err;
-		}
-
+		await ms.initialize();
 		return ms;
+	}
+
+	/**
+	 * Flushes any pending changes to disk.
+	 * Only exports if there are uncommitted changes.
+	 */
+	public async commit(): Promise<void> {
+		if (!this.isDirty) return;
+		await this.export.write(await this.index.EXPORT());
+		this.isDirty = false;
 	}
 
 	/**
@@ -81,16 +67,20 @@ export class MicroSearch<T extends Document> {
 	}
 
 	/**
-	 * Truncates the index, removing all documents.
+	 * Initialize the index, loading from export if available.
+	 * If the export is already current, no action is taken.
 	 */
-	public async truncate(): Promise<void> {
-		await this.index.FLUSH();
+	public async initialize(): Promise<void> {
+		const isCurrent = await this.export.isCurrent();
 
-		try {
-			await access(this.extract);
-			await rm(dirname(this.extract), { recursive: true });
-		} catch (err: any) {
-			if (err.code !== "ENOENT") throw err;
+		if (!isCurrent) {
+			const exists = await this.export.exists();
+
+			if (exists) {
+				await this.index.IMPORT(await this.export.read());
+			} else {
+				await this.index.FLUSH();
+			}
 		}
 
 		this.isDirty = false;
@@ -165,21 +155,11 @@ export class MicroSearch<T extends Document> {
 	}
 
 	/**
-	 * Flushes any pending changes to disk.
-	 * Only exports if there are uncommitted changes.
+	 * Truncates the index, removing all documents.
 	 */
-	public async commit(): Promise<void> {
-		if (!this.isDirty) return;
-
-		await mkdir(dirname(this.extract), { recursive: true });
-
-		const exportData = await this.index.EXPORT();
-		const jsonStream = Readable.from([JSON.stringify(exportData)]);
-
-		await pipeline(jsonStream, createGzip({ level: 6 }), createWriteStream(this.extract));
-
-		// todo: import {stat} from "fs/promises"; and log mtime;
-
+	public async truncate(): Promise<void> {
+		await this.index.FLUSH();
+		await this.export.destroy();
 		this.isDirty = false;
 	}
 }

@@ -1,7 +1,7 @@
 import { v4 as uuid } from "uuid";
-import { QueryRequest } from "../types/queries.js";
 import { ProgrammingBook, ProgrammingBooks } from "../assets/programming-books.js";
 import { MicroSearch } from "./micro-search.class.js";
+import { QueryRequest } from "../types/queries.js";
 
 describe("MicroSearch", () => {
 	let ms: MicroSearch<ProgrammingBook>;
@@ -32,6 +32,20 @@ describe("MicroSearch", () => {
 
 			expect(await ms.count()).toBe(0);
 		});
+
+		it("should re-initialize if index is out-of-date", async () => {
+			const ms_2 = await MicroSearch.create<ProgrammingBook>(index);
+
+			await ms_2.truncate();
+
+			// original instance should still have data
+			expect(await ms.count()).toBe(ProgrammingBooks.length);
+
+			// re-initializing should load the truncated index
+			await ms.initialize();
+
+			expect(await ms.count()).toBe(0);
+		});
 	});
 
 	describe("delete", () => {
@@ -59,6 +73,8 @@ describe("MicroSearch", () => {
 
 		it("should index a single document", async () => {
 			await expect(ms.put(ProgrammingBooks[0])).resolves.not.toThrow();
+			await ms.commit();
+
 			await expect(ms.count()).resolves.toBe(1);
 		});
 
