@@ -17,7 +17,7 @@ MicroSearch provides a simple, type-safe interface for full-text search with:
 
 ## Performance Characteristics
 
-Based on performance testing:
+Based on limited performance testing:
 
 | Dataset Size    | Indexing Speed | Query Speed  | Memory/Record | Recommended Use |
 | --------------- | -------------- | ------------ | ------------- | --------------- |
