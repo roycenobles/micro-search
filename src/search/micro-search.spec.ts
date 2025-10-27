@@ -316,15 +316,15 @@ describe("MicroSearch", () => {
 
 				// putMany should not create export file
 				await testMs.putMany([testDoc]);
-				expect(fs.existsSync(`${testIndex}/index.json.gz`)).toBe(false);
+				expect(fs.existsSync(`${testIndex}/index.gz`)).toBe(false);
 
 				// flush should create export file
 				await testMs.flush();
-				expect(fs.existsSync(`${testIndex}/index.json.gz`)).toBe(true);
+				expect(fs.existsSync(`${testIndex}/index.gz`)).toBe(true);
 
 				// second flush should not error (idempotent)
 				await testMs.flush();
-				expect(fs.existsSync(`${testIndex}/index.json.gz`)).toBe(true);
+				expect(fs.existsSync(`${testIndex}/index.gz`)).toBe(true);
 			} finally {
 				fs.rmSync(testIndex, { recursive: true });
 			}
@@ -359,7 +359,7 @@ describe("MicroSearch", () => {
 				const exportPath = await testMs.export();
 				const exportTime = performance.now() - exportStart;
 
-				expect(exportPath).toContain("index.json.gz");
+				expect(exportPath).toContain("index.gz");
 				expect(fs.existsSync(exportPath)).toBe(true);
 
 				const fileStats = fs.statSync(exportPath);

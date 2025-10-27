@@ -143,7 +143,7 @@ export class MicroSearch<T extends Document> {
 	 * @returns Path to the exported file
 	 */
 	public async export(): Promise<string> {
-		const exportPath = `${this.path}/index.json.gz`;
+		const exportPath = `${this.path}/index.gz`;
 
 		await mkdir(this.path, { recursive: true });
 
@@ -160,7 +160,7 @@ export class MicroSearch<T extends Document> {
 	 * @param filePath Path to the JSON file to import (defaults to {path}/index.json.gz)
 	 */
 	public async import(filePath?: string): Promise<void> {
-		const importPath = filePath || `${this.path}/index.json.gz`;
+		const importPath = filePath || `${this.path}/index.gz`;
 
 		// Use streaming decompression with chunk accumulation
 		// Note: search-index IMPORT() requires full object, so some memory usage is unavoidable
