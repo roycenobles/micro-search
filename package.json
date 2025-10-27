@@ -20,12 +20,14 @@
 	"types": "dist/index.d.ts",
 	"exports": {
 		".": {
+			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js",
-			"types": "./dist/index.d.ts"
+			"default": "./dist/index.js"
 		},
 		"./constructs": {
+			"types": "./dist/constructs/index.d.ts",
 			"import": "./dist/constructs/index.js",
-			"types": "./dist/constructs/index.d.ts"
+			"default": "./dist/constructs/index.js"
 		},
 		"./package.json": "./package.json"
 	},
