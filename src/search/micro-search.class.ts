@@ -1,12 +1,13 @@
-import { createGunzip, createGzip } from "zlib";
 import { createReadStream, createWriteStream } from "fs";
-import { Document } from "../types/documents.js";
-import { MemoryLevel } from "memory-level";
 import { mkdir } from "fs/promises";
-import { pipeline } from "stream/promises";
-import { QueryRequest, QueryResponse } from "../types/queries.js";
-import { Readable } from "stream";
+import { MemoryLevel } from "memory-level";
+import { dirname } from "path";
 import { SearchIndex } from "search-index";
+import { Readable } from "stream";
+import { pipeline } from "stream/promises";
+import { createGunzip, createGzip } from "zlib";
+import { Document } from "../types/documents.js";
+import { QueryRequest, QueryResponse } from "../types/queries.js";
 
 /**
  * A lightweight search engine for indexing and querying documents.
@@ -15,7 +16,7 @@ import { SearchIndex } from "search-index";
  */
 export class MicroSearch<T extends Document> {
 	private readonly index: SearchIndex;
-	private readonly path: string;
+	private readonly extract: string;
 	private isDirty: boolean;
 
 	/**
@@ -24,7 +25,7 @@ export class MicroSearch<T extends Document> {
 	 */
 	constructor(indexPath: string) {
 		this.index = new SearchIndex({ name: indexPath, Level: MemoryLevel });
-		this.path = indexPath;
+		this.extract = `${indexPath}/index.gz`;
 		this.isDirty = false;
 	}
 
@@ -57,6 +58,8 @@ export class MicroSearch<T extends Document> {
 	 * Truncates the index, removing all documents.
 	 */
 	public async truncate(): Promise<void> {
+		// todo: clean up stored index file on disk?
+		// todo: reset isDirty flag?
 		await this.index.FLUSH();
 	}
 
@@ -132,42 +135,31 @@ export class MicroSearch<T extends Document> {
 	 * Flushes any pending changes to disk.
 	 * Only exports if there are uncommitted changes.
 	 */
-	public async flush(): Promise<void> {
-		if (this.isDirty) {
-			await this.export();
-			this.isDirty = false;
-		}
-	}
+	public async commit(): Promise<void> {
+		if (!this.isDirty) return;
 
-	/**
-	 * Exports the index to a compressed JSON file.
-	 * @returns Path to the exported file
-	 */
-	public async export(): Promise<string> {
-		const exportPath = `${this.path}/index.gz`;
-
-		await mkdir(this.path, { recursive: true });
+		await mkdir(dirname(this.extract), { recursive: true });
 
 		const exportData = await this.index.EXPORT();
 		const jsonStream = Readable.from([JSON.stringify(exportData)]);
 
-		await pipeline(jsonStream, createGzip({ level: 6 }), createWriteStream(exportPath));
+		await pipeline(jsonStream, createGzip({ level: 6 }), createWriteStream(this.extract));
 
-		return exportPath;
+		// todo: import {stat} from "fs/promises"; and log mtime;
+
+		this.isDirty = false;
 	}
 
 	/**
 	 * Imports an index from a compressed JSON file.
 	 * @param filePath Path to the JSON file to import (defaults to {path}/index.json.gz)
 	 */
-	public async import(filePath?: string): Promise<void> {
-		const importPath = filePath || `${this.path}/index.gz`;
+	public async import(): Promise<void> {
+		// todo: convert to load and initialize on startup
 
-		// Use streaming decompression with chunk accumulation
-		// Note: search-index IMPORT() requires full object, so some memory usage is unavoidable
 		let decompressed = "";
 		const gunzip = createGunzip();
-		const readStream = createReadStream(importPath);
+		const readStream = createReadStream(this.extract);
 
 		for await (const chunk of readStream.pipe(gunzip)) {
 			decompressed += chunk.toString("utf8");
