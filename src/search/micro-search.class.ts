@@ -6,6 +6,7 @@ import { StorageAdapter } from "./storage-adapter.js";
 
 /**
  * A lightweight search engine for indexing and querying documents.
+ * Uses in-memory storage with optional disk persistence.
  *
  * @template T - The type of documents to be indexed and queried, extending the Document interface.
  */
