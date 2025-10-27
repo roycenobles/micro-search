@@ -14,9 +14,9 @@ import { SearchIndex } from "search-index";
  * @template T - The type of documents to be indexed and queried, extending the Document interface.
  */
 export class MicroSearch<T extends Document> {
-	private index: SearchIndex;
-	private path: string;
-	private dirty = false;
+	private readonly index: SearchIndex;
+	private readonly path: string;
+	private isDirty: boolean;
 
 	/**
 	 * Creates an instance of the MicroSearch class.
@@ -25,6 +25,7 @@ export class MicroSearch<T extends Document> {
 	constructor(indexPath: string) {
 		this.index = new SearchIndex({ name: indexPath, Level: MemoryLevel });
 		this.path = indexPath;
+		this.isDirty = false;
 	}
 
 	/**
@@ -49,7 +50,7 @@ export class MicroSearch<T extends Document> {
 	 */
 	public async deleteMany(docs: T[]): Promise<void> {
 		await (this.index.DELETE as any)(...docs.map(({ id }) => id));
-		this.dirty = true;
+		this.isDirty = true;
 	}
 
 	/**
@@ -95,7 +96,7 @@ export class MicroSearch<T extends Document> {
 			}
 		);
 
-		this.dirty = true;
+		this.isDirty = true;
 	}
 
 	/**
@@ -132,9 +133,9 @@ export class MicroSearch<T extends Document> {
 	 * Only exports if there are uncommitted changes.
 	 */
 	public async flush(): Promise<void> {
-		if (this.dirty) {
+		if (this.isDirty) {
 			await this.export();
-			this.dirty = false;
+			this.isDirty = false;
 		}
 	}
 
