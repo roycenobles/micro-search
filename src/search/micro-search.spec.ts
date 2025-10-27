@@ -1,8 +1,7 @@
-import fs from "fs";
 import { v4 as uuid } from "uuid";
-import { QueryRequest } from "../types/queries.js";
 import { ProgrammingBook, ProgrammingBooks } from "../assets/programming-books.js";
 import { MicroSearch } from "./micro-search.class.js";
+import { QueryRequest } from "../types/queries.js";
 
 describe("MicroSearch", () => {
 	let ms: MicroSearch<ProgrammingBook>;
@@ -10,17 +9,50 @@ describe("MicroSearch", () => {
 
 	beforeAll(async () => {
 		index = `./index/${uuid()}`;
-		ms = new MicroSearch<ProgrammingBook>(index);
+		ms = await MicroSearch.create<ProgrammingBook>(index);
 	});
 
 	afterAll(() => {
-		fs.rmSync(index, { recursive: true });
+		ms.truncate();
+	});
+
+	describe("initialize", () => {
+		beforeEach(async () => {
+			await ms.putMany(ProgrammingBooks, ["published"]);
+			await ms.commit();
+		});
+
+		it("should initialize with existing data", async () => {
+			ms = await MicroSearch.create<ProgrammingBook>(index);
+
+			// loaded index should have same document count
+			expect(await ms.count()).toBe(ProgrammingBooks.length);
+
+			ms.truncate();
+
+			expect(await ms.count()).toBe(0);
+		});
+
+		it("should re-initialize if index is out-of-date", async () => {
+			const ms_2 = await MicroSearch.create<ProgrammingBook>(index);
+
+			await ms_2.truncate();
+
+			// original instance should still have data
+			expect(await ms.count()).toBe(ProgrammingBooks.length);
+
+			// re-initializing should load the truncated index
+			await ms.initialize();
+
+			expect(await ms.count()).toBe(0);
+		});
 	});
 
 	describe("delete", () => {
 		beforeEach(async () => {
 			await ms.truncate();
 			await ms.putMany(ProgrammingBooks, ["published"]);
+			await ms.commit();
 		});
 
 		it("should delete a document by ID", async () => {
@@ -41,6 +73,8 @@ describe("MicroSearch", () => {
 
 		it("should index a single document", async () => {
 			await expect(ms.put(ProgrammingBooks[0])).resolves.not.toThrow();
+			await ms.commit();
+
 			await expect(ms.count()).resolves.toBe(1);
 		});
 

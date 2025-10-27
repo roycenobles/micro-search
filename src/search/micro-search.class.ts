@@ -1,6 +1,8 @@
+import { MemoryLevel } from "memory-level";
 import { SearchIndex } from "search-index";
 import { Document } from "../types/documents.js";
 import { QueryRequest, QueryResponse } from "../types/queries.js";
+import { StorageAdapter } from "./storage-adapter.js";
 
 /**
  * A lightweight search engine for indexing and querying documents.
@@ -8,14 +10,35 @@ import { QueryRequest, QueryResponse } from "../types/queries.js";
  * @template T - The type of documents to be indexed and queried, extending the Document interface.
  */
 export class MicroSearch<T extends Document> {
-	private index: SearchIndex;
+	private readonly index: SearchIndex;
+	private readonly store: StorageAdapter;
+	private isDirty: boolean;
+
+	private constructor(indexPath: string) {
+		this.index = new SearchIndex({ Level: MemoryLevel });
+		this.store = new StorageAdapter(indexPath);
+		this.isDirty = false;
+	}
 
 	/**
-	 * Creates an instance of the MicroSearch class.
-	 * @param indexPath Path to index storage folder
+	 * Creates an instance of MicroSearch, loading an existing index if available.
+	 * @param indexPath The path to the index directory on disk
+	 * @returns A promise that resolves to a MicroSearch instance
 	 */
-	constructor(indexPath: string) {
-		this.index = new SearchIndex({ name: indexPath });
+	public static async create<T extends Document>(indexPath: string): Promise<MicroSearch<T>> {
+		const ms = new MicroSearch<T>(indexPath);
+		await ms.initialize();
+		return ms;
+	}
+
+	/**
+	 * Flushes any pending changes to disk.
+	 * Only exports if there are uncommitted changes.
+	 */
+	public async commit(): Promise<void> {
+		if (!this.isDirty) return;
+		await this.store.write(await this.index.EXPORT());
+		this.isDirty = false;
 	}
 
 	/**
@@ -40,13 +63,27 @@ export class MicroSearch<T extends Document> {
 	 */
 	public async deleteMany(docs: T[]): Promise<void> {
 		await (this.index.DELETE as any)(...docs.map(({ id }) => id));
+		this.isDirty = true;
 	}
 
 	/**
-	 * Truncates the index, removing all documents.
+	 * Initialize the index, loading from export if available.
+	 * If the export is already current, no action is taken.
 	 */
-	public async truncate(): Promise<void> {
-		await this.index.FLUSH();
+	public async initialize(): Promise<void> {
+		const isCurrent = await this.store.isCurrent();
+
+		if (!isCurrent) {
+			const exists = await this.store.exists();
+
+			if (exists) {
+				await this.index.IMPORT(await this.store.read());
+			} else {
+				await this.index.FLUSH();
+			}
+		}
+
+		this.isDirty = false;
 	}
 
 	/**
@@ -84,6 +121,8 @@ export class MicroSearch<T extends Document> {
 								.then(([t]: any) => t)
 			}
 		);
+
+		this.isDirty = true;
 	}
 
 	/**
@@ -113,5 +152,14 @@ export class MicroSearch<T extends Document> {
 				SIZE: response.PAGING.SIZE
 			}
 		};
+	}
+
+	/**
+	 * Truncates the index, removing all documents.
+	 */
+	public async truncate(): Promise<void> {
+		await this.index.FLUSH();
+		await this.store.destroy();
+		this.isDirty = false;
 	}
 }
