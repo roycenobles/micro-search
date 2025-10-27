@@ -18,6 +18,17 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./constructs": {
+			"import": "./dist/constructs/index.js",
+			"types": "./dist/constructs/index.d.ts"
+		},
+		"./package.json": "./package.json"
+	},
 	"ts-node": {
 		"esm": true
 	},
@@ -28,6 +39,7 @@
 		"test:coverage": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage"
 	},
 	"dependencies": {
+		"aws-cdk-lib": "^2.221.0",
 		"memory-level": "^3.1.0",
 		"search-index": "^6.0.1"
 	},
