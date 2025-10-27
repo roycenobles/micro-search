@@ -1,5 +1,5 @@
 import { createReadStream, createWriteStream } from "fs";
-import { mkdir } from "fs/promises";
+import { access, mkdir } from "fs/promises";
 import { MemoryLevel } from "memory-level";
 import { dirname } from "path";
 import { SearchIndex } from "search-index";
@@ -19,14 +19,40 @@ export class MicroSearch<T extends Document> {
 	private readonly extract: string;
 	private isDirty: boolean;
 
-	/**
-	 * Creates an instance of the MicroSearch class.
-	 * @param indexPath Path to index storage folder
-	 */
-	constructor(indexPath: string) {
+	private constructor(indexPath: string) {
 		this.index = new SearchIndex({ name: indexPath, Level: MemoryLevel });
 		this.extract = `${indexPath}/index.gz`;
 		this.isDirty = false;
+	}
+
+	/**
+	 * Creates an instance of MicroSearch, loading an existing index if available.
+	 * @param indexPath The path to the index directory on disk
+	 * @returns A promise that resolves to a MicroSearch instance
+	 */
+	public static async create<T extends Document>(indexPath: string): Promise<MicroSearch<T>> {
+		const ms = new MicroSearch<T>(indexPath);
+
+		try {
+			await access(ms.extract);
+
+			const readStream = createReadStream(ms.extract);
+			const gunzip = createGunzip();
+
+			let unzipped = "";
+
+			for await (const chunk of readStream.pipe(gunzip)) {
+				unzipped += chunk.toString("utf8");
+			}
+
+			const indexData = JSON.parse(unzipped);
+
+			await ms.index.IMPORT(indexData);
+		} catch (err: any) {
+			if (err.code !== "ENOENT") throw err;
+		}
+
+		return ms;
 	}
 
 	/**
@@ -148,24 +174,5 @@ export class MicroSearch<T extends Document> {
 		// todo: import {stat} from "fs/promises"; and log mtime;
 
 		this.isDirty = false;
-	}
-
-	/**
-	 * Imports an index from a compressed JSON file.
-	 * @param filePath Path to the JSON file to import (defaults to {path}/index.json.gz)
-	 */
-	public async import(): Promise<void> {
-		// todo: convert to load and initialize on startup
-
-		let decompressed = "";
-		const gunzip = createGunzip();
-		const readStream = createReadStream(this.extract);
-
-		for await (const chunk of readStream.pipe(gunzip)) {
-			decompressed += chunk.toString("utf8");
-		}
-
-		const indexData = JSON.parse(decompressed);
-		await this.index.IMPORT(indexData);
 	}
 }

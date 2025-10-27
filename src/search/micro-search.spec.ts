@@ -10,7 +10,7 @@ describe("MicroSearch", () => {
 
 	beforeAll(async () => {
 		index = `./index/${uuid()}`;
-		ms = new MicroSearch<ProgrammingBook>(index);
+		ms = await MicroSearch.create<ProgrammingBook>(index);
 	});
 
 	afterAll(() => {
