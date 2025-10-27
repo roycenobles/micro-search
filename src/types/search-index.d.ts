@@ -9,7 +9,7 @@ declare module "search-index" {
 	 * Options for initializing the search index.
 	 */
 	export type IndexOptions = {
-		db?: unknown;
+		Level?: any;
 		cacheLength?: number;
 		caseSensitive?: boolean;
 		name?: string;
@@ -29,5 +29,7 @@ declare module "search-index" {
 		PUT(documents: any[], options?: any): Promise<void>;
 		ALL_DOCUMENTS(limit: number): Promise<any>;
 		SEARCH(query: any, options?: any): Promise<any>;
+		EXPORT(): Promise<any>;
+		IMPORT(index: any): Promise<void>;
 	}
 }

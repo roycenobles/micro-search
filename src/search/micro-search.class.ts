@@ -1,6 +1,8 @@
 import { SearchIndex } from "search-index";
 import { Document } from "../types/documents.js";
 import { QueryRequest, QueryResponse } from "../types/queries.js";
+import { MemoryLevel } from "memory-level";
+import { mkdir, writeFile, readFile } from "fs/promises";
 
 /**
  * A lightweight search engine for indexing and querying documents.
@@ -9,13 +11,15 @@ import { QueryRequest, QueryResponse } from "../types/queries.js";
  */
 export class MicroSearch<T extends Document> {
 	private index: SearchIndex;
+	private path: string;
 
 	/**
 	 * Creates an instance of the MicroSearch class.
 	 * @param indexPath Path to index storage folder
 	 */
 	constructor(indexPath: string) {
-		this.index = new SearchIndex({ name: indexPath });
+		this.index = new SearchIndex({ name: indexPath, Level: MemoryLevel });
+		this.path = indexPath;
 	}
 
 	/**
@@ -40,6 +44,7 @@ export class MicroSearch<T extends Document> {
 	 */
 	public async deleteMany(docs: T[]): Promise<void> {
 		await (this.index.DELETE as any)(...docs.map(({ id }) => id));
+		await this.export();
 	}
 
 	/**
@@ -84,6 +89,8 @@ export class MicroSearch<T extends Document> {
 								.then(([t]: any) => t)
 			}
 		);
+
+		await this.export();
 	}
 
 	/**
@@ -113,5 +120,34 @@ export class MicroSearch<T extends Document> {
 				SIZE: response.PAGING.SIZE
 			}
 		};
+	}
+
+	/**
+	 * Exports the index to a JSON file.
+	 * @returns Path to the exported file
+	 */
+	public async export(): Promise<string> {
+		const exportPath = `${this.path}/index.json`;
+
+		await mkdir(this.path, { recursive: true });
+
+		const exportData = await this.index.EXPORT();
+
+		await writeFile(exportPath, JSON.stringify(exportData));
+
+		return exportPath;
+	}
+
+	/**
+	 * Imports an index from a JSON file.
+	 * @param filePath Path to the JSON file to import (defaults to {path}/index.json)
+	 */
+	public async import(filePath?: string): Promise<void> {
+		const importPath = filePath || `${this.path}/index.json`;
+
+		const data = await readFile(importPath, "utf8");
+		const indexData = JSON.parse(data);
+
+		await this.index.IMPORT(indexData);
 	}
 }

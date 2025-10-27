@@ -1,8 +1,8 @@
-import fs from "fs";
 import { v4 as uuid } from "uuid";
 import { QueryRequest } from "../types/queries.js";
 import { ProgrammingBook, ProgrammingBooks } from "../assets/programming-books.js";
 import { MicroSearch } from "./micro-search.class.js";
+import fs from "fs";
 
 describe("MicroSearch", () => {
 	let ms: MicroSearch<ProgrammingBook>;
@@ -21,6 +21,8 @@ describe("MicroSearch", () => {
 		beforeEach(async () => {
 			await ms.truncate();
 			await ms.putMany(ProgrammingBooks, ["published"]);
+
+			await ms.export();
 		});
 
 		it("should delete a document by ID", async () => {
