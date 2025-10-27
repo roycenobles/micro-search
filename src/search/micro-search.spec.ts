@@ -22,7 +22,7 @@ describe("MicroSearch", () => {
 			await ms.truncate();
 			await ms.putMany(ProgrammingBooks, ["published"]);
 
-			await ms.export();
+			await ms.flush();
 		});
 
 		it("should delete a document by ID", async () => {
@@ -288,5 +288,115 @@ describe("MicroSearch", () => {
 			expect(response.PAGING.OFFSET).toBe(30);
 			expect(response.PAGING.PAGES).toBe(3);
 		});
+	});
+
+	describe("import/export/flush", () => {
+		interface TestDocument {
+			id: string;
+			title: string;
+			description: string;
+			category: string;
+			price: number;
+			date: string;
+		}
+
+		it("should only export when flush() is called", async () => {
+			const testIndex = `./index/${uuid()}`;
+			const testMs = new MicroSearch<TestDocument>(testIndex);
+
+			try {
+				const testDoc: TestDocument = {
+					id: uuid(),
+					title: "Test Product",
+					description: "A test product",
+					category: "test",
+					price: 100,
+					date: new Date().toISOString()
+				};
+
+				// putMany should not create export file
+				await testMs.putMany([testDoc]);
+				expect(fs.existsSync(`${testIndex}/index.json.gz`)).toBe(false);
+
+				// flush should create export file
+				await testMs.flush();
+				expect(fs.existsSync(`${testIndex}/index.json.gz`)).toBe(true);
+
+				// second flush should not error (idempotent)
+				await testMs.flush();
+				expect(fs.existsSync(`${testIndex}/index.json.gz`)).toBe(true);
+			} finally {
+				fs.rmSync(testIndex, { recursive: true });
+			}
+		});
+
+		it("should handle export and import of 50,000 entries with compression", async () => {
+			const testIndex = `./index/${uuid()}`;
+			const testMs = new MicroSearch<TestDocument>(testIndex);
+
+			try {
+				// Generate 50,000 test documents
+				const categories = ["electronics", "books", "clothing", "food", "toys"];
+				const testDocs: TestDocument[] = Array.from({ length: 50000 }, (_, i) => ({
+					id: uuid(),
+					title: `Test Product ${i}`,
+					description: `This is a detailed description for product number ${i} with various keywords and content`,
+					category: categories[i % categories.length],
+					price: Math.floor(Math.random() * 1000),
+					date: new Date(2020 + (i % 5), i % 12, (i % 28) + 1).toISOString()
+				}));
+
+				// Index documents
+				const indexStart = performance.now();
+				await testMs.putMany(testDocs);
+				const indexTime = performance.now() - indexStart;
+
+				expect(await testMs.count()).toBe(50000);
+				console.log(`Indexed 50,000 documents in ${indexTime.toFixed(2)}ms`);
+
+				// Export (with compression)
+				const exportStart = performance.now();
+				const exportPath = await testMs.export();
+				const exportTime = performance.now() - exportStart;
+
+				expect(exportPath).toContain("index.json.gz");
+				expect(fs.existsSync(exportPath)).toBe(true);
+
+				const fileStats = fs.statSync(exportPath);
+				const fileSizeMB = fileStats.size / (1024 * 1024);
+				console.log(`Exported to ${fileSizeMB.toFixed(2)}MB (compressed) in ${exportTime.toFixed(2)}ms`);
+
+				// Clear index
+				await testMs.truncate();
+				expect(await testMs.count()).toBe(0);
+
+				// Import (decompression)
+				const importStart = performance.now();
+				await testMs.import();
+				const importTime = performance.now() - importStart;
+
+				expect(await testMs.count()).toBe(50000);
+				console.log(`Imported 50,000 documents in ${importTime.toFixed(2)}ms`);
+
+				// Verify data integrity with a sample query
+				const results = await testMs.query({
+					QUERY: { FIELD: "category", VALUE: "electronics" },
+					PAGE: { NUMBER: 0, SIZE: 100 }
+				});
+
+				expect(results.RESULTS.length).toBeGreaterThan(0);
+				expect(results.RESULTS.every((doc) => doc.category === "electronics")).toBe(true);
+
+				// Performance summary
+				console.log("\nPerformance Summary:");
+				console.log(`  Indexing: ${(indexTime / 50000).toFixed(4)}ms per document`);
+				console.log(`  Export: ${(exportTime / 50000).toFixed(4)}ms per document`);
+				console.log(`  Import: ${(importTime / 50000).toFixed(4)}ms per document`);
+				console.log(`  Compression ratio: ${((1 - fileSizeMB / 30) * 100).toFixed(1)}% (estimated)`);
+			} finally {
+				// Cleanup
+				fs.rmSync(testIndex, { recursive: true });
+			}
+		}, 60000); // 60 second timeout for large dataset
 	});
 });
