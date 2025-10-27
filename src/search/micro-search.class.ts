@@ -15,21 +15,10 @@ export class MicroSearch<T extends Document> {
 	private readonly store: StorageAdapter;
 	private isDirty: boolean;
 
-	private constructor(indexPath: string) {
+	public constructor(indexPath: string) {
 		this.index = new SearchIndex({ Level: MemoryLevel });
 		this.store = new StorageAdapter(indexPath);
 		this.isDirty = false;
-	}
-
-	/**
-	 * Creates an instance of MicroSearch, loading an existing index if available.
-	 * @param indexPath The path to the index directory on disk
-	 * @returns A promise that resolves to a MicroSearch instance
-	 */
-	public static async create<T extends Document>(indexPath: string): Promise<MicroSearch<T>> {
-		const ms = new MicroSearch<T>(indexPath);
-		await ms.initialize();
-		return ms;
 	}
 
 	/**
