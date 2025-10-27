@@ -5,7 +5,10 @@ import { createGunzip, createGzip } from "zlib";
 import { Readable } from "stream";
 import { pipeline } from "stream/promises";
 
-export class IndexExport {
+/**
+ * StorageAdapter handles reading and writing the index export to disk.
+ */
+export class StorageAdapter {
 	private readonly _file: string;
 	private _mtime: string | undefined;
 
@@ -14,12 +17,19 @@ export class IndexExport {
 		this._mtime = undefined;
 	}
 
+	/**
+	 * Destroys the index file and any associated data.
+	 */
 	public async destroy(): Promise<void> {
 		if (!(await this.exists())) return;
 		await rm(dirname(this._file), { recursive: true });
 		this._mtime = await this.lastModified();
 	}
 
+	/**
+	 * Checks if the index file exists.
+	 * @returns True if the index file exists, false otherwise.
+	 */
 	public async exists(): Promise<boolean> {
 		let exists = false;
 
@@ -33,6 +43,10 @@ export class IndexExport {
 		return exists;
 	}
 
+	/**
+	 * Checks if the index has been modified since last read.
+	 * @returns True if the index is current, false otherwise.
+	 */
 	public async isCurrent(): Promise<boolean> {
 		let isCurrent = false;
 
@@ -43,6 +57,10 @@ export class IndexExport {
 		return isCurrent;
 	}
 
+	/**
+	 * Gets the last modified time of the index file.
+	 * @returns The last modified time as a string, or undefined if the file does not exist.
+	 */
 	public async lastModified(): Promise<string | undefined> {
 		let mtime = undefined;
 
@@ -53,6 +71,10 @@ export class IndexExport {
 		return mtime;
 	}
 
+	/**
+	 * Reads data from the index file.
+	 * @returns The parsed JSON data from the index file, or undefined if the file does not exist or is empty.
+	 */
 	public async read(): Promise<any> {
 		let result = undefined;
 
@@ -74,6 +96,10 @@ export class IndexExport {
 		return result;
 	}
 
+	/**
+	 * Writes data to the index file.
+	 * @param data The parsed JSON data to write.
+	 */
 	public async write(data: any): Promise<void> {
 		if (!data) return;
 

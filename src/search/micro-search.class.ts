@@ -2,7 +2,7 @@ import { MemoryLevel } from "memory-level";
 import { SearchIndex } from "search-index";
 import { Document } from "../types/documents.js";
 import { QueryRequest, QueryResponse } from "../types/queries.js";
-import { IndexExport } from "./index-export.js";
+import { StorageAdapter } from "./storage-adapter.js";
 
 /**
  * A lightweight search engine for indexing and querying documents.
@@ -11,12 +11,12 @@ import { IndexExport } from "./index-export.js";
  */
 export class MicroSearch<T extends Document> {
 	private readonly index: SearchIndex;
-	private readonly export: IndexExport;
+	private readonly store: StorageAdapter;
 	private isDirty: boolean;
 
 	private constructor(indexPath: string) {
 		this.index = new SearchIndex({ Level: MemoryLevel });
-		this.export = new IndexExport(indexPath);
+		this.store = new StorageAdapter(indexPath);
 		this.isDirty = false;
 	}
 
@@ -37,7 +37,7 @@ export class MicroSearch<T extends Document> {
 	 */
 	public async commit(): Promise<void> {
 		if (!this.isDirty) return;
-		await this.export.write(await this.index.EXPORT());
+		await this.store.write(await this.index.EXPORT());
 		this.isDirty = false;
 	}
 
@@ -71,13 +71,13 @@ export class MicroSearch<T extends Document> {
 	 * If the export is already current, no action is taken.
 	 */
 	public async initialize(): Promise<void> {
-		const isCurrent = await this.export.isCurrent();
+		const isCurrent = await this.store.isCurrent();
 
 		if (!isCurrent) {
-			const exists = await this.export.exists();
+			const exists = await this.store.exists();
 
 			if (exists) {
-				await this.index.IMPORT(await this.export.read());
+				await this.index.IMPORT(await this.store.read());
 			} else {
 				await this.index.FLUSH();
 			}
@@ -159,7 +159,7 @@ export class MicroSearch<T extends Document> {
 	 */
 	public async truncate(): Promise<void> {
 		await this.index.FLUSH();
-		await this.export.destroy();
+		await this.store.destroy();
 		this.isDirty = false;
 	}
 }
