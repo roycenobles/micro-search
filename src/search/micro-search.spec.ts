@@ -9,7 +9,8 @@ describe("MicroSearch", () => {
 
 	beforeAll(async () => {
 		index = `./index/${uuid()}`;
-		ms = await MicroSearch.create<ProgrammingBook>(index);
+		ms = new MicroSearch<ProgrammingBook>(index);
+		await ms.initialize();
 	});
 
 	afterAll(() => {
@@ -23,7 +24,9 @@ describe("MicroSearch", () => {
 		});
 
 		it("should initialize with existing data", async () => {
-			ms = await MicroSearch.create<ProgrammingBook>(index);
+			ms = new MicroSearch<ProgrammingBook>(index);
+
+			await ms.initialize();
 
 			// loaded index should have same document count
 			expect(await ms.count()).toBe(ProgrammingBooks.length);
@@ -34,7 +37,9 @@ describe("MicroSearch", () => {
 		});
 
 		it("should re-initialize if index is out-of-date", async () => {
-			const ms_2 = await MicroSearch.create<ProgrammingBook>(index);
+			const ms_2 = new MicroSearch<ProgrammingBook>(index);
+
+			await ms_2.initialize();
 
 			await ms_2.truncate();
 
