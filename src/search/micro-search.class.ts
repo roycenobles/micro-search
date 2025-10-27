@@ -1,5 +1,5 @@
 import { createReadStream, createWriteStream } from "fs";
-import { access, mkdir } from "fs/promises";
+import { access, mkdir, rm } from "fs/promises";
 import { MemoryLevel } from "memory-level";
 import { dirname } from "path";
 import { SearchIndex } from "search-index";
@@ -84,9 +84,16 @@ export class MicroSearch<T extends Document> {
 	 * Truncates the index, removing all documents.
 	 */
 	public async truncate(): Promise<void> {
-		// todo: clean up stored index file on disk?
-		// todo: reset isDirty flag?
 		await this.index.FLUSH();
+
+		try {
+			await access(this.extract);
+			await rm(dirname(this.extract), { recursive: true });
+		} catch (err: any) {
+			if (err.code !== "ENOENT") throw err;
+		}
+
+		this.isDirty = false;
 	}
 
 	/**
