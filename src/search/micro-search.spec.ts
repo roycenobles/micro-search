@@ -16,6 +16,24 @@ describe("MicroSearch", () => {
 		ms.truncate();
 	});
 
+	describe("initialize", () => {
+		beforeEach(async () => {
+			await ms.putMany(ProgrammingBooks, ["published"]);
+			await ms.commit();
+		});
+
+		it("should initialize with existing data", async () => {
+			ms = await MicroSearch.create<ProgrammingBook>(index);
+
+			// loaded index should have same document count
+			expect(await ms.count()).toBe(ProgrammingBooks.length);
+
+			ms.truncate();
+
+			expect(await ms.count()).toBe(0);
+		});
+	});
+
 	describe("delete", () => {
 		beforeEach(async () => {
 			await ms.truncate();
