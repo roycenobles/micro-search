@@ -2,7 +2,7 @@ import { MemoryLevel } from "memory-level";
 import { SearchIndex } from "search-index";
 import { Document } from "../types/documents.js";
 import { QueryRequest, QueryResponse } from "../types/queries.js";
-import { StorageAdapter } from "./storage-adapter.js";
+import { IStorage } from "storage/storage.interface.js";
 
 /**
  * A lightweight search engine for indexing and querying documents.
@@ -12,12 +12,12 @@ import { StorageAdapter } from "./storage-adapter.js";
  */
 export class MicroSearch<T extends Document> {
 	private readonly index: SearchIndex;
-	private readonly store: StorageAdapter;
+	private readonly store: IStorage;
 	private isDirty: boolean;
 
-	public constructor(indexPath: string) {
+	public constructor(storage: IStorage) {
 		this.index = new SearchIndex({ Level: MemoryLevel });
-		this.store = new StorageAdapter(indexPath);
+		this.store = storage;
 		this.isDirty = false;
 	}
 

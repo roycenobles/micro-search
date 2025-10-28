@@ -4,11 +4,12 @@ import { dirname } from "path";
 import { createGunzip, createGzip } from "zlib";
 import { Readable } from "stream";
 import { pipeline } from "stream/promises";
+import { IStorage } from "./storage.interface.js";
 
 /**
- * StorageAdapter handles reading and writing the index export to disk.
+ * DiskStorage handles reading and writing the index export to disk.
  */
-export class StorageAdapter {
+export class DiskStorage implements IStorage {
 	private readonly _file: string;
 	private _mtime: string | undefined;
 
