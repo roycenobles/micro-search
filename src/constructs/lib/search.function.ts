@@ -1,11 +1,11 @@
 import { Construct } from "constructs";
 import { Architecture, FileSystem, Runtime } from "aws-cdk-lib/aws-lambda";
-import { ISearchCollection } from "./search.collection.js";
+import { ISearchFileSystem } from "./search.filesystem.js";
 import { NodejsFunction, NodejsFunctionProps, SourceMapMode } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Duration } from "aws-cdk-lib/core";
 
 export type SearchFunctionProps = NodejsFunctionProps & {
-	collection: ISearchCollection;
+	fileSystem: ISearchFileSystem;
 };
 
 /**
@@ -14,13 +14,13 @@ export type SearchFunctionProps = NodejsFunctionProps & {
  */
 export class SearchFunction extends NodejsFunction {
 	constructor(scope: Construct, id: string, props: SearchFunctionProps) {
-		const { functionName, collection, memorySize, ...properties } = props;
+		const { functionName, fileSystem: collection, memorySize, ...properties } = props;
 
 		super(scope, id, {
 			functionName: functionName,
 			memorySize: memorySize || 3008,
 			allowPublicSubnet: true,
-			architecture: Architecture.X86_64,
+			architecture: Architecture.ARM_64,
 			runtime: Runtime.NODEJS_20_X,
 			filesystem: FileSystem.fromEfsAccessPoint(collection.accessPoint, "/mnt/search"),
 			timeout: Duration.seconds(30),

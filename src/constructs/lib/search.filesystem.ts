@@ -1,25 +1,25 @@
 import { RemovalPolicy } from "aws-cdk-lib";
-import { IVpc, Vpc } from "aws-cdk-lib/aws-ec2";
+import { IVpc } from "aws-cdk-lib/aws-ec2";
 import { AccessPoint, FileSystem } from "aws-cdk-lib/aws-efs";
 import { Construct } from "constructs";
 
-export interface ISearchCollection {
+export interface ISearchFileSystem {
 	fileSystem: FileSystem;
 	accessPoint: AccessPoint;
 	vpc: IVpc;
 }
 
-export type SearchCollectionProps = {
+export type SearchFileSystemProps = {
 	readonly fileSystemName: string;
 	readonly removalPolicy: RemovalPolicy;
-	readonly vpc?: IVpc;
+	readonly vpc: IVpc;
 };
 
 /**
- * SearchCollection sets up the necessary AWS resources for a micro-search collection,
+ * EfsSearchCollection sets up the necessary AWS resources for a micro-search collection,
  * including a VPC, EFS file system, and access point.
  */
-export class SearchCollection extends Construct implements ISearchCollection {
+export class SearchFileSystem extends Construct implements ISearchFileSystem {
 	private readonly _vpc: IVpc;
 	private readonly _fileSystem: FileSystem;
 	private readonly _accessPoint: AccessPoint;
@@ -36,10 +36,10 @@ export class SearchCollection extends Construct implements ISearchCollection {
 		return this._accessPoint;
 	}
 
-	constructor(scope: Construct, id: string, props: SearchCollectionProps) {
+	constructor(scope: Construct, id: string, props: SearchFileSystemProps) {
 		super(scope, id);
 
-		this._vpc = props.vpc ?? Vpc.fromLookup(this, "vpc", { isDefault: true });
+		this._vpc = props.vpc;
 
 		this._fileSystem = new FileSystem(this, "file-system", {
 			fileSystemName: props.fileSystemName,
