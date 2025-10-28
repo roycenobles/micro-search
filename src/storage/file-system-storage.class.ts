@@ -7,9 +7,9 @@ import { pipeline } from "stream/promises";
 import { IStorage } from "./storage.interface.js";
 
 /**
- * DiskStorage handles reading and writing the index export to disk.
+ * FileSystemStorage handles reading and writing the index export to disk.
  */
-export class DiskStorage implements IStorage {
+export class FileSystemStorage implements IStorage {
 	private readonly _file: string;
 	private _mtime: string | undefined;
 

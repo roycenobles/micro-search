@@ -2,7 +2,7 @@ import { v4 as uuid } from "uuid";
 import { ProgrammingBook, ProgrammingBooks } from "../assets/programming-books.js";
 import { MicroSearch } from "./micro-search.class.js";
 import { QueryRequest } from "../types/queries.js";
-import { DiskStorage } from "../storage/disk-storage.class.js";
+import { FileSystemStorage } from "../storage/file-system-storage.class.js";
 
 describe("MicroSearch", () => {
 	let ms: MicroSearch<ProgrammingBook>;
@@ -10,7 +10,7 @@ describe("MicroSearch", () => {
 
 	beforeAll(async () => {
 		index = `./index/${uuid()}`;
-		ms = new MicroSearch<ProgrammingBook>(new DiskStorage(index));
+		ms = new MicroSearch<ProgrammingBook>(new FileSystemStorage(index));
 		await ms.initialize();
 	});
 
@@ -25,7 +25,7 @@ describe("MicroSearch", () => {
 		});
 
 		it("should initialize with existing data", async () => {
-			ms = new MicroSearch<ProgrammingBook>(new DiskStorage(index));
+			ms = new MicroSearch<ProgrammingBook>(new FileSystemStorage(index));
 
 			await ms.initialize();
 
@@ -38,7 +38,7 @@ describe("MicroSearch", () => {
 		});
 
 		it("should re-initialize if index is out-of-date", async () => {
-			const ms_2 = new MicroSearch<ProgrammingBook>(new DiskStorage(index));
+			const ms_2 = new MicroSearch<ProgrammingBook>(new FileSystemStorage(index));
 
 			await ms_2.initialize();
 

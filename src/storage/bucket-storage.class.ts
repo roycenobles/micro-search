@@ -9,7 +9,7 @@ import { createGunzip, createGzip } from "zlib";
 import { Readable } from "stream";
 import { IStorage } from "./storage.interface.js";
 
-export interface S3StorageConfig {
+export interface BucketStorageConfig {
 	bucket: string;
 	key: string;
 	client?: S3Client;
@@ -17,15 +17,15 @@ export interface S3StorageConfig {
 }
 
 /**
- * S3Storage handles reading and writing the index export to AWS S3.
+ * BucketStorage handles reading and writing the index export to AWS S3.
  */
-export class S3Storage implements IStorage {
+export class BucketStorage implements IStorage {
 	private readonly _client: S3Client;
 	private readonly _bucket: string;
 	private readonly _key: string;
 	private _mtime: string | undefined;
 
-	constructor(config: S3StorageConfig) {
+	constructor(config: BucketStorageConfig) {
 		this._bucket = config.bucket;
 		this._key = config.key;
 		this._client = config.client || new S3Client({ region: config.region || "us-east-1" });
