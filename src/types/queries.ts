@@ -23,6 +23,7 @@ export type QueryRequest = {
  */
 export type QueryResponse<T extends Document> = {
 	RESULTS: T[];
+	HITS: number;
 	PAGING: {
 		PAGES: number;
 		OFFSET: number;

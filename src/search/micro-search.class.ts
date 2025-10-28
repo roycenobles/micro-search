@@ -137,6 +137,7 @@ export class MicroSearch<T extends Document> {
 
 		return {
 			RESULTS: response.RESULT.map(({ _doc: { _id, _indexed, ...props } }: any) => ({ id: _id, ...props } as T)),
+			HITS: response.RESULT_LENGTH,
 			PAGING: {
 				PAGES: response.PAGING.TOTAL,
 				OFFSET: response.PAGING.DOC_OFFSET,

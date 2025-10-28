@@ -143,6 +143,7 @@ describe("Types", () => {
 	describe("QueryResponse", () => {
 		it("should create valid query responses", () => {
 			const response: QueryResponse<TestDoc> = {
+				HITS: 1,
 				RESULTS: [
 					{
 						id: "1",
