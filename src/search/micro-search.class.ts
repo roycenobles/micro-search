@@ -150,7 +150,6 @@ export class MicroSearch<T extends Document> {
 	 */
 	public async truncate(): Promise<void> {
 		await this.index.FLUSH();
-		await this.store.destroy();
-		this.isDirty = false;
+		this.isDirty = true;
 	}
 }

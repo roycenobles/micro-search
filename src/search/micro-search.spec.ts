@@ -41,8 +41,8 @@ describe("MicroSearch", () => {
 			const ms_2 = new MicroSearch<ProgrammingBook>(new FileSystemStorage(index));
 
 			await ms_2.initialize();
-
 			await ms_2.truncate();
+			await ms_2.commit();
 
 			// original instance should still have data
 			expect(await ms.count()).toBe(ProgrammingBooks.length);
