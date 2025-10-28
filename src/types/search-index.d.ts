@@ -4,6 +4,12 @@
  * For more detailed types, refer to the official documentation of search-index.
  * https://www.npmjs.com/package/search-index
  */
+
+// re-exporting to avoid classic-level dependency
+declare module "search-index/src/SearchIndex.js" {
+	export { SearchIndex, IndexOptions } from "search-index";
+}
+
 declare module "search-index" {
 	/**
 	 * Options for initializing the search index.

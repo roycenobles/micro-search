@@ -176,6 +176,32 @@ All types are fully documented with TypeScript interfaces. Key types include:
 -  `QueryResponse<T>`: Search results with pagination info
 -  `Token`: Query token types (field searches, ranges, AND/OR operations)
 
+## No Native Dependencies
+
+This package is designed to work in AWS Lambda and other serverless environments **without requiring native binary compilation**.
+
+### How It Works
+
+`search-index` supports multiple storage backends:
+- `classic-level` - disk-based storage with native Node.js bindings (requires compilation)
+- `browser-level` - IndexedDB for browsers  
+- `memory-level` - pure JavaScript in-memory storage
+
+We import directly from the base `SearchIndex` class to bypass the `classic-level` entrypoint entirely:
+
+```typescript
+// This avoids loading classic-level
+import { SearchIndex } from "search-index/src/SearchIndex.js";
+const index = new SearchIndex({ Level: MemoryLevel });
+```
+
+### Benefits
+
+1. **No native binaries** - No need to rebuild for Lambda's architecture
+2. **Smaller bundle size** - `classic-level` and its dependencies are excluded
+3. **Faster cold starts** - Less code to load and initialize
+4. **Platform-independent** - Pure JavaScript works everywhere
+
 ## Performance Tips
 
 1. **Keep datasets under 10,000 records** for optimal performance

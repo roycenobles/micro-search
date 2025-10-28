@@ -1,5 +1,5 @@
 import { MemoryLevel } from "memory-level";
-import { SearchIndex } from "search-index";
+import { SearchIndex } from "search-index/src/SearchIndex.js";
 import { Document } from "../types/documents.js";
 import { QueryRequest, QueryResponse } from "../types/queries.js";
 import { IStorage } from "storage/storage.interface.js";

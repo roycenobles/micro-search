@@ -30,16 +30,6 @@ export class SearchFunction extends NodejsFunction {
 				externalModules: ["@aws-sdk/client-*", "@aws-sdk/s3-*", "aws-lambda"],
 				sourceMap: true,
 				sourceMapMode: SourceMapMode.INLINE,
-				forceDockerBundling: true,
-				nodeModules: ["classic-level"],
-				commandHooks: {
-					beforeBundling: () => [],
-					beforeInstall: () => [],
-					afterBundling(_inputDir: string, outputDir: string): string[] {
-						// rebuild classic-level specifically for the lambda environment
-						return [`cd ${outputDir}`, `npm rebuild classic-level --build-from-source`];
-					}
-				},
 				environment: {
 					NODE_OPTIONS: "--enable-source-maps",
 					...props.environment
