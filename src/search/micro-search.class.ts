@@ -90,7 +90,7 @@ export class MicroSearch<T extends Document> {
 	 * @param docs The documents to add or update.
 	 * @param keywords Fields to be treated as keywords (not tokenized).
 	 */
-	public async putMany(docs: T[], keywords?: string[]): Promise<void> {
+	public async putMany<K extends keyof T>(docs: T[], keywords?: K[]): Promise<void> {
 		const _indexed = new Date().toISOString();
 
 		const { PUT, TOKENIZATION_PIPELINE_STAGES: STAGES } = this.index as any;
@@ -100,7 +100,7 @@ export class MicroSearch<T extends Document> {
 			{
 				storeVectors: true,
 				tokenizer: (tokens: any, field: any, ops: any) =>
-					keywords?.includes(field)
+					keywords?.includes(field as K)
 						? Promise.resolve([[tokens, "1.00"]])
 						: STAGES.SPLIT([tokens, field, ops])
 								.then(STAGES.SKIP)
