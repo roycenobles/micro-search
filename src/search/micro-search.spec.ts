@@ -97,6 +97,54 @@ describe("MicroSearch", () => {
 			await expect(ms.putMany([])).resolves.not.toThrow();
 			await expect(ms.count()).resolves.toBe(0);
 		});
+
+		it("should fully update an existing document", async () => {
+			await ms.put({
+				id: "a1e2c3d4-1111-2222-3333-444455556666",
+				title: "Clean Code: A Handbook of Agile Software Craftsmanship",
+				content: "Clean Code teaches principles and best practices for writing clean, maintainable code.",
+				author: "Robert C. Martin",
+				tags: ["clean code", "software", "best practices"],
+				published: "2008-08-01",
+				publishedYear: 2008
+			});
+
+			await ms.commit();
+
+			expect(
+				await (
+					await ms.query({
+						QUERY: {
+							FIELD: "author",
+							VALUE: "Robert"
+						}
+					})
+				).RESULTS.length
+			).toBe(1);
+
+			await ms.put({
+				id: "a1e2c3d4-1111-2222-3333-444455556666",
+				title: "Clean Code: A Handbook of Agile Software Craftsmanship",
+				content: "Clean Code teaches principles and best practices for writing clean, maintainable code.",
+				author: "Stephen J. Summers",
+				tags: ["clean code", "software", "best practices"],
+				published: "2008-08-01",
+				publishedYear: 2008
+			});
+
+			await ms.commit();
+
+			expect(
+				await (
+					await ms.query({
+						QUERY: {
+							FIELD: "author",
+							VALUE: "Robert"
+						}
+					})
+				).RESULTS.length
+			).toBe(0);
+		});
 	});
 
 	describe("query", () => {

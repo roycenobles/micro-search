@@ -81,6 +81,7 @@ export class MicroSearch<T extends Document> {
 	 * @param doc The document to add or update
 	 */
 	public async put(doc: T): Promise<void> {
+		await this.deleteMany([doc]);
 		await this.putMany([doc]);
 	}
 
