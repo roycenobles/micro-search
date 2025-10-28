@@ -24,11 +24,6 @@
 			"import": "./dist/index.js",
 			"default": "./dist/index.js"
 		},
-		"./constructs": {
-			"types": "./dist/constructs/index.d.ts",
-			"import": "./dist/constructs/index.js",
-			"default": "./dist/constructs/index.js"
-		},
 		"./package.json": "./package.json"
 	},
 	"ts-node": {
@@ -42,7 +37,6 @@
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.918.0",
-		"aws-cdk-lib": "^2.221.0",
 		"memory-level": "^3.1.0",
 		"search-index": "^6.0.1"
 	},
